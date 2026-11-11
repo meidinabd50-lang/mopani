@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOPANI - Misi Pintar Mengaji</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Plus Jakarta Sans & Amiri for Arabic) -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sunflower: {
+                            50: '#fefce8',
+                            100: '#fef9c3',
+                            200: '#fef08a',
+                            300: '#fde047',
+                            400: '#facc15',
+                            500: '#eab308',
+                            600: '#ca8a04',
+                            700: '#a16207',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        arabic: ['Amiri', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(234, 179, 8, 0.25); }
+            50% { box-shadow: 0 0 35px rgba(234, 179, 8, 0.55); }
+        }
+        .glow-effect {
+            animation: pulseGlow 3.5s infinite;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(254, 240, 138, 0.8);
+        }
+        @media print {
+            body * { visibility: hidden; }
+            #certificate-print-area, #certificate-print-area * { visibility: visible; }
+            #certificate-print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: none !important;
+                box-shadow: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-sunflower-50 via-amber-50/50 to-orange-50/30 min-h-screen text-slate-800 font-sans flex flex-col justify-between selection:bg-sunflower-300">
+
+    <!-- Header / Navbar -->
+    <header class="bg-white/90 backdrop-blur-md border-b border-sunflower-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3.5 flex justify-between items-center">
+            <div class="flex items-center space-x-3.5 cursor-pointer group" onclick="window._actualApp.goHome()">
+                <div class="w-12 h-12 bg-gradient-to-tr from-sunflower-400 to-amber-500 rounded-2xl flex items-center justify-center shadow-lg text-white font-arabic text-2xl font-bold group-hover:scale-105 transition">
+                    م
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg text-slate-900 tracking-tight leading-none">MOPANI</h1>
+                    <p class="text-[10px] text-amber-600 font-bold uppercase tracking-wider mt-0.5">Misi Pintar Mengaji</p>
+                </div>
+            </div>
+            <div class="hidden md:block text-right">
+                <p class="text-[11px] font-bold text-amber-800 bg-sunflower-50 px-3.5 py-1.5 rounded-full border border-sunflower-200 shadow-sm">🌻 Fidyawati M.I. Banti, S.Pd</p>
+            </div>
+            <div id="user-status-container" class="flex items-center space-x-3">
+                <!-- Status User / Tombol Logout dirender dinamis -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6">
+        <div id="app-view">
+            <!-- Tampilan Utama Dirender secara Dinamis oleh JS -->
+        </div>
+    </main>
+
+    <!-- Modal Dialog Universal -->
+    <div id="modal-container" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl border border-sunflower-200 space-y-4 animate-in fade-in zoom-in duration-200">
+            <div id="modal-icon" class="w-16 h-16 bg-sunflower-100 text-sunflower-600 rounded-2xl mx-auto flex items-center justify-center text-3xl font-bold shadow-inner">
+                <i class="fa-solid fa-star"></i>
+            </div>
+            <div>
+                <h3 id="modal-title" class="text-lg font-extrabold text-slate-900">Judul Pesan</h3>
+                <p id="modal-message" class="text-xs text-slate-500 mt-1.5 leading-relaxed">Pesan detail di sini...</p>
+            </div>
+            <button onclick="window._actualApp.closeModal()" class="w-full py-3 bg-gradient-to-r from-sunflower-500 to-amber-500 hover:from-sunflower-600 hover:to-amber-600 text-white font-bold text-xs rounded-xl shadow-md transition">
+                Mengerti / Lanjutkan
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white/80 border-t border-sunflower-200 py-5 text-center text-xs text-slate-500 space-y-1.5 mt-8 shadow-inner">
+        <p class="font-medium">MOPANI (Misi Pintar Mengaji) — Media Game Edukasi Al-Qur'an & Iqra Interaktif</p>
+        <p class="text-[11px] font-bold text-amber-700">🌻 Dibuat oleh: Fidyawati M.I. Banti, S.Pd</p>
+    </footer>
+
+    <!-- Firebase & Game Logic Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Configuration
+const appId = 'mopani-default-app';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD8bEGrMsKI0ZanlxvVuMKGHjVRM220wtI",
+  authDomain: "misi-pintar-mengaji-id.firebaseapp.com",
+  projectId: "misi-pintar-mengaji-id",
+  storageBucket: "misi-pintar-mengaji-id.firebasestorage.app",
+  messagingSenderId: "233388171575",
+  appId: "1:233388171575:web:8c5cc84662010c0ed5fab2",
+  measurementId: "G-77Q5GQBVMH"
+};
+        let firebaseApp, db, auth, currentUserAuth = null;
+
+        try {
+            firebaseApp = initializeApp(firebaseConfig);
+            db = getFirestore(firebaseApp);
+            auth = getAuth(firebaseApp);
+
+            const initAuth = async () => {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                currentUserAuth = auth.currentUser;
+                app.initCloudData();
+            };
+            initAuth();
+        } catch (e) {
+            console.warn("Offline or Demo Mode active:", e);
+        }
+
+        const GAME_DATA = {
+            levels: [
+                {
+                    id: 'pemula',
+                    title: 'Level Pemula',
+                    subtitle: 'Tahapan Iqra 1 & 2',
+                    badge: '🌱',
+                    color: 'from-amber-500 to-yellow-500',
+                    missions: [
+                        {
+                            id: 'm1_1',
+                            title: 'Misi Detektif Huruf Hijaiyah',
+                            desc: 'Mengenal huruf hijaiyah tunggal berbaris Fathah (a)',
+                            lessons: [
+                                { ar: 'أ', read: 'Alif', desc: 'Dibaca A (Tanpa suara tersendiri)' },
+                                { ar: 'ب', read: 'Ba', desc: 'Dibaca Ba' },
+                                { ar: 'ت', read: 'Ta', desc: 'Dibaca Ta' },
+                                { ar: 'ث', read: 'Tha', desc: 'Dibaca Tha (Ujung lidah keluar sedikit)' },
+                                { ar: 'ج', read: 'Jim', desc: 'Dibaca Ja' }
+                            ],
+                            quiz: [
+                                { q: 'Huruf hijaiyah di samping dibaca... (أ)', options: ['Alif / A', 'Ba', 'Ta', 'Jal'], answer: 0 },
+                                { q: 'Bagaimana cara membaca huruf (ب) dengan harakat fathah?', options: ['Bu', 'Bi', 'Ba', 'Baa'], answer: 2 },
+                                { q: 'Manakah huruf Jim di bawah ini?', options: ['أ', 'ت', 'ث', 'ج'], answer: 3 }
+                            ]
+                        },
+                        {
+                            id: 'm1_2',
+                            title: 'Misi Ahli Menulis Huruf Sambung',
+                            desc: 'Belajar bentuk huruf hijaiyah di awal, tengah, dan akhir kata',
+                            lessons: [
+                                { ar: 'ب -ـبـ-ـب', read: 'Bentuk Ba', desc: 'Ba di awal, tengah, dan akhir' },
+                                { ar: 'ت -ـتـ-ـت', read: 'Bentuk Ta', desc: 'Ta di awal, tengah, dan akhir' },
+                                { ar: 'ن -ـنـ-ـن', read: 'Bentuk Nun', desc: 'Nun di awal, tengah, dan akhir' }
+                            ],
+                            quiz: [
+                                { q: 'Bagaimana bentuk huruf Ba (ب) saat berada di tengah kata?', options: ['ب', 'ـبـ', 'ـب', 'Tidak berubah'], answer: 1 },
+                                { q: 'Manakah bentuk huruf Nun (ن) di awal kata?', options: ['ن', 'ـن', 'ـنـ', 'أن'], answer: 2 }
+                            ]
+                        },
+                        {
+                            id: 'm1_3',
+                            title: 'Misi Mengenal Harakat',
+                            desc: 'Mengenal Fathah (a), Kasrah (i), dan Dammah (u)',
+                            lessons: [
+                                { ar: 'بَ - بِ - بُ', read: 'Ba - Bi - Bu', desc: 'Harakat Fathah, Kasrah, Dammah' },
+                                { ar: 'تَ - تِ - تُ', read: 'Ta - Ti - Tu', desc: 'Contoh harakat lengkap pada huruf Ta' }
+                            ],
+                            quiz: [
+                                { q: 'Harakat garis di atas huruf ( َ ) disebut...', options: ['Kasrah', 'Fathah', 'Dammah', 'Sukun'], answer: 1 },
+                                { q: 'Bunyi bacaan dari (تِ) adalah...', options: ['Ta', 'Ti', 'Tu', 'Taa'], answer: 1 }
+                            ]
+                        },
+                        {
+                            id: 'm1_4',
+                            title: 'Misi Mengenal Tanwin, Sukun, Tasydid & Mad',
+                            desc: 'Belajar bunyi tanwin (an, in, un), sukun (mati), dan tasydid (ganda)',
+                            lessons: [
+                                { ar: 'بَنْ - بِنْ - بُنْ', read: 'Ban - Bin - Bun', desc: 'Bacaan Tanwin' },
+                                { ar: 'أَبْ - أَتْ', read: 'Ab - At', desc: 'Bacaan Sukun (Mati)' },
+                                { ar: 'رَبَّ', read: 'Rabba', desc: 'Bacaan Tasydid (Ditekan)' }
+                            ],
+                            quiz: [
+                                { q: 'Bunyi harakat dua di atas (ً) adalah...', options: ['An', 'In', 'Un', 'Mati'], answer: 0 },
+                                { q: 'Tanda baca tasydid (ّ) berfungsi untuk...', options: ['Mematikan huruf', 'Menyambung huruf', 'Menekankan/menghandakan huruf', 'Memanjangkan bacaan'], answer: 2 }
+                            ]
+                        },
+                        {
+                            id: 'm1_5',
+                            title: 'Misi Laboratorium Membaca Iqra 2',
+                            desc: 'Latihan merangkai 2-3 huruf bersambung pendek',
+                            lessons: [
+                                { ar: 'كَـتَبَ', read: 'Kataba', desc: 'Dia telah menulis' },
+                                { ar: 'ذَهَبَ', read: 'Zahaba', desc: 'Dia telah pergi' },
+                                { ar: 'قَرَأَ', read: 'Qara\'a', desc: 'Dia telah membaca' }
+                            ],
+                            quiz: [
+                                { q: 'Bagaimana cara membaca kata (كَـتَبَ)?', options: ['Kataba', 'Katabu', 'Kitaba', 'Katifa'], answer: 0 },
+                                { q: 'Arti dari bacaan (ذَهَبَ) adalah...', options: ['Makan', 'Minum', 'Pergi', 'Duduk'], answer: 2 }
+                            ]
+                        },
+                        {
+                            id: 'm1_6',
+                            title: 'Evaluasi & Tantangan Diri Pemula',
+                            desc: 'Uji kemampuan akhir level pemula untuk mendapatkan lencana!',
+                            lessons: [
+                                { ar: 'بَسَطَ - خَلَقَ - رزَقَ', read: 'Basatha - Khalaqa - Razaqa', desc: 'Uji kelancaran bacaan dasar' }
+                            ],
+                            quiz: [
+                                { q: 'Manakah rangkaian huruf yang dibaca "Khalaqa"?', options: ['خَلَقَ', 'قَرَأَ', 'ذَهَبَ', 'كَتَبَ'], answer: 0 },
+                                { q: 'Berapa jumlah harakat dasar utama yang dipelajari di pemula?', options: ['1', '2', '3 (Fathah, Kasrah, Dammah)', '5'], answer: 2 },
+                                { q: 'Apa bunyi bacaan dari huruf (س) berharakat dammah (سُ)?', options: ['Sa', 'Si', 'Su', 'Saa'], answer: 2 }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: 'mulai_paham',
+                    title: 'Level Mulai Paham',
+                    subtitle: 'Tahapan Iqra 3, 4, 5 & 6',
+                    badge: '⭐',
+                    color: 'from-emerald-500 to-teal-600',
+                    missions: [
+                        {
+                            id: 'm2_1',
+                            title: 'Misi Pemanasan Bacaan & Mad Thabi\'i',
+                            desc: 'Mengenal bacaan panjang (Mad Panjang 2 Harakat)',
+                            lessons: [
+                                { ar: 'قَال - يَقُوْلُ - قِيْلَ', read: 'Qāla - Yaqūlu - Qīla', desc: 'Mad Thabi\'i (Alif, Waw, Ya sukun)' }
+                            ],
+                            quiz: [
+                                { q: 'Berapa harakat panjang bacaan Mad Thabi\'i?', options: ['1 harakat', '2 harakat', '5 harakat', '6 harakat'], answer: 1 },
+                                { q: 'Huruf mad thabi\'i terdiri dari Alif, Ya sukun, dan...', options: ['Waw sukun', 'Nun mati', 'Tasydid', 'Tanwin'], answer: 0 }
+                            ]
+                        },
+                        {
+                            id: 'm2_2',
+                            title: 'Misi Detektif Tanda Bacaan & Ayat Panjang',
+                            desc: 'Membaca kalimat sambung lebih panjang pada Iqra 4 & 5',
+                            lessons: [
+                                { ar: 'وَمَا خَلَقْتُ الْجِنَّ وَالإِنْسَ', read: 'Wa mā khalaqtu al-jinna wa al-insa', desc: 'Latihan ayat Al-Qur\'an pendek' }
+                            ],
+                            quiz: [
+                                { q: 'Bagaimana cara berhenti pada huruf berharakat sukun di akhir kalimat?', options: ['Dipantulkan/Dimatikan', 'Dibaca Panjang', 'Ditekan', 'Diabaikan'], answer: 0 }
+                            ]
+                        },
+                        {
+                            id: 'm2_3',
+                            title: 'Misi Mengenal Tajwid Dasar',
+                            desc: 'Mengenal hukum Nun Mati / Tanwin (Izhar, Ikhfa, Idgham, Iqlab)',
+                            lessons: [
+                                { ar: 'مِنْ خَوْفٍ', read: 'Min khawfin (Izhar)', desc: 'Nun mati bertemu huruf halaq dibaca jelas' },
+                                { ar: 'مِنْ طِينٍ', read: 'Min thinin (Ikhfa)', desc: 'Disamarkan dengan dengung' }
+                            ],
+                            quiz: [
+                                { q: 'Hukum membaca Nun mati bertemu huruf (ب) disebut...', options: ['Izhar', 'Iqlab', 'Idgham', 'Ikhfa'], answer: 1 }
+                            ]
+                        },
+                        {
+                            id: 'm2_4',
+                            title: 'Misi Laboratorium Kata & Al-Syamsiyah / Qamariyah',
+                            desc: 'Membedakan Alif Lam Qamariyah (baca jelas) dan Syamsiyah (lebur)',
+                            lessons: [
+                                { ar: 'اَلْقَمَرُ (Qamariyah)', read: 'Al-Qamaru', desc: 'Lam dibaca jelas' },
+                                { ar: 'اَلشَّمْسُ (Syamsiyah)', read: 'Ash-Shamsu', desc: 'Lam dilebur ke huruf syamsiyah' }
+                            ],
+                            quiz: [
+                                { q: 'Pada bacaan Al-Syamsiyah, huruf Lam (ل) dibaca...', options: ['Jelas', 'Dilebur / dimasukkan ke huruf berikutnya', 'Dipantulkan', 'Ditekan'], answer: 1 }
+                            ]
+                        },
+                        {
+                            id: 'm2_5',
+                            title: 'Misi Penjelajah Waqaf & Tanda Berhenti',
+                            desc: 'Mengenal tanda waqaf lazim (م), jaiz (ج), dan laa washla (لا)',
+                            lessons: [
+                                { ar: 'ج (Waqaf Jaiz)', read: 'Boleh berhenti boleh lanjut', desc: 'Tanda waqaf pilihan' },
+                                { ar: 'لا (Laa Washla)', read: 'Lebih baik diteruskan', desc: 'Jangan berhenti kecuali terpaksa' }
+                            ],
+                            quiz: [
+                                { q: 'Apa arti tanda waqaf (ج) pada ayat Al-Qur\'an?', options: ['Harus berhenti', 'Dilarang berhenti', 'Boleh berhenti atau boleh lanjut', 'Harus mengulang'], answer: 2 }
+                            ]
+                        },
+                        {
+                            id: 'm2_6',
+                            title: 'Tantangan Diri Level Mulai Paham',
+                            desc: 'Uji pemahaman tajwid dan kelancaran Iqra 6',
+                            lessons: [
+                                { ar: 'إِذَا جَاءَ نَصْرُ اللَّهِ وَالْفَتْحُ', read: 'Idzā jā\'a nashru\'llāhi wa al-fath', desc: 'Surah An-Nasr ayat 1' }
+                            ],
+                            quiz: [
+                                { q: 'Surah apakah yang diawali dengan ayat "Idzā jā\'a nashru\'llāhi..."?', options: ['An-Nasr', 'Al-Asr', 'Al-Kautsar', 'Al-Ikhlas'], answer: 0 }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: 'paham',
+                    title: 'Level Paham (Mahir)',
+                    subtitle: 'Hukum Bacaan Lanjutan & Al-Qur\'an',
+                    badge: '👑',
+                    color: 'from-amber-600 to-emerald-800',
+                    missions: [
+                        {
+                            id: 'm3_1',
+                            title: 'Misi Hukum Bacaan Qalqalah',
+                            desc: 'Mengenal Qalqalah Sughra dan Kubra (Pantulan huruf ط، ج، د، ب، ق)',
+                            lessons: [
+                                { ar: 'قُلْ هُوَ اللَّهُ أَحَدٌ', read: 'Ahadun (Qalqalah Kubra)', desc: 'Dipantulkan di akhir ayat' },
+                                { ar: 'خَلَقْنَا', read: 'Khalaqnā (Qalqalah Sughra)', desc: 'Dipantulkan di tengah kata' }
+                            ],
+                            quiz: [
+                                { q: 'Huruf Qalqalah ada berapa?', options: ['3 huruf', '5 huruf (ق ط ب ج د)', '7 huruf', '10 huruf'], answer: 1 }
+                            ]
+                        },
+                        {
+                            id: 'm3_2',
+                            title: 'Misi Angka Arab & Jumlah Surah',
+                            desc: 'Mengenal angka dalam bahasa Arab serta wawasan Al-Qur\'an',
+                            lessons: [
+                                { ar: '١ (1) - ٢ (2) - ٣ (3) - ٤ (4) - ٥ (5)', read: 'Wahid, Itsnan, Tsalatsah...', desc: 'Angka Arab dasar' }
+                            ],
+                            quiz: [
+                                { q: 'Berapa jumlah total surah di dalam Al-Qur\'an?', options: ['110 surah', '114 surah', '120 surah', '30 surah'], answer: 1 }
+                            ]
+                        },
+                        {
+                            id: 'm3_3',
+                            title: 'Misi Detektif Tajwid Mahir',
+                            desc: 'Menganalisis hukum Mad Wajib Muttashil dan Mad Jaiz Munfashil',
+                            lessons: [
+                                { ar: 'بِمَا أُنْزِلَ (Mad Jaiz)', read: 'Mad Jaiz Munfashil (4-5 harakat)', desc: 'Mad bertemu hamzah di lain kata' }
+                            ],
+                            quiz: [
+                                { q: 'Berapa panjang bacaan Mad Wajib Muttashil dalam satu kata?', options: ['2 harakat', '4 sampai 5 harakat', '1 harakat', '10 harakat'], answer: 1 }
+                            ]
+                        },
+                        {
+                            id: 'm3_4',
+                            title: 'Misi Mantap Membaca Surah Pendek (Juz Amma)',
+                            desc: 'Simulasi membaca tartil Surah Al-Fatihah dan Al-Ikhlas dengan benar',
+                            lessons: [
+                                { ar: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ', read: 'Bismillāhi ar-rahmāni ar-rahīm', desc: 'Basmalah Tartil' }
+                            ],
+                            quiz: [
+                                { q: 'Bagaimana hukum membaca Isti\'adzah sebelum membaca Al-Qur\'an?', options: ['Wajib', 'Sunnah', 'Haram', 'Makruh'], answer: 1 }
+                            ]
+                        },
+                        {
+                            id: 'm3_5',
+                            title: 'Tantangan Diri Akhir MOPANI (Sertifikat Master)',
+                            desc: 'Ujian komprehensif mengaji mandiri untuk kelulusan penuh MOPANI',
+                            lessons: [
+                                { ar: 'مُبَارَكٌ لَكَ التَّخَرُّجُ مِنْ مِيْصَانِي', read: 'Mubārakun laka at-takharruju min MOPANI', desc: 'Selamat Atas Kelulusan Anda!' }
+                            ],
+                            quiz: [
+                                { q: 'Apa kepanjangan dari MOPANI dalam game edukasi ini?', options: ['Misi Pintar Mengaji', 'Media Pintar Anak Islam', 'Metode Pembacaan Al-Qur\'an', 'Madrasah Online Paling Indah'], answer: 0 }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        const ALL_SURAHS_DATA = [
+            "1. Al-Fatihah (Pembukaan) - 7 Ayat",
+            "2. Al-Baqarah (Sapi Betina) - 286 Ayat",
+            "3. Ali 'Imran (Keluarga 'Imran) - 200 Ayat",
+            "4. An-Nisa' (Wanita) - 176 Ayat",
+            "5. Al-Ma'idah (Hidangan) - 120 Ayat",
+            "6. Al-An'am (Binatang Ternak) - 165 Ayat",
+            "7. Al-A'raf (Tempat Tertinggi) - 206 Ayat",
+            "8. Al-Anfal (Rampasan Perang) - 75 Ayat",
+            "9. At-Taubah (Pengampunan) - 129 Ayat",
+            "10. Yunus (Nabi Yunus) - 109 Ayat",
+            "11. Hud (Nabi Hud) - 123 Ayat",
+            "12. Yusuf (Nabi Yusuf) - 111 Ayat",
+            "13. Ar-Ra'd (Guruh/Petir) - 43 Ayat",
+            "14. Ibrahim (Nabi Ibrahim) - 52 Ayat",
+            "15. Al-Hijr (Daerah Pegunungan) - 99 Ayat",
+            "16. An-Nahl (Lebah) - 128 Ayat",
+            "17. Al-Isra' (Perjalanan Malam) - 111 Ayat",
+            "18. Al-Kahfi (Penghuni-penghuni Gua) - 110 Ayat",
+            "19. Maryam (Siti Maryam) - 98 Ayat",
+            "20. Taha (Thaha) - 135 Ayat",
+            "21. Al-Anbiya' (Para Nabi) - 112 Ayat",
+            "22. Al-Hajj (Haji) - 78 Ayat",
+            "23. Al-Mu'minun (Orang-orang Mukmin) - 118 Ayat",
+            "24. An-Nur (Cahaya) - 64 Ayat",
+            "25. Al-Furqan (Pembeda) - 77 Ayat",
+            "26. Asy-Syu'ara' (Para Penyair) - 227 Ayat",
+            "27. An-Naml (Semut) - 93 Ayat",
+            "28. Al-Qasas (Kisah-kisah) - 88 Ayat",
+            "29. Al-'Ankabut (Laba-laba) - 69 Ayat",
+            "30. Ar-Rum (Bangsa Romawi) - 60 Ayat",
+            "31. Luqman (Keluarga Luqman) - 34 Ayat",
+            "32. As-Sajdah (Sujud) - 30 Ayat",
+            "33. Al-Ahzab (Golongan-golongan yang Bersekutu) - 73 Ayat",
+            "34. Saba' (Kaum Saba') - 54 Ayat",
+            "35. Fatir (Pencipta) - 45 Ayat",
+            "36. Yasin (Yasin) - 83 Ayat",
+            "37. As-Saffat (Barisan-barisan) - 182 Ayat",
+            "38. Sad (Shaad) - 88 Ayat",
+            "39. Az-Zumar (Rombongan-rombongan) - 75 Ayat",
+            "40. Ghafir (Yang Mengampuni) - 85 Ayat",
+            "41. Fussilat (Yang Dijelaskan) - 54 Ayat",
+            "42. Asy-Syura (Musyawarah) - 53 Ayat",
+            "43. Az-Zukhruf (Perhiasan) - 89 Ayat",
+            "44. Ad-Dukhan (Kabut) - 59 Ayat",
+            "45. Al-Jasiyah (Yang Berlutut) - 37 Ayat",
+            "46. Al-Ahqaf (Bukit-bukit Pasir) - 35 Ayat",
+            "47. Muhammad (Nabi Muhammad) - 38 Ayat",
+            "48. Al-Fath (Kemenangan) - 29 Ayat",
+            "49. Al-Hujurat (Kamar-kamar) - 18 Ayat",
+            "50. Qaf (Qaaf) - 45 Ayat",
+            "51. Az-Zariyat (Angin yang Menerbangkan) - 60 Ayat",
+            "52. At-Tur (Bukit) - 49 Ayat",
+            "53. An-Najm (Bintang) - 62 Ayat",
+            "54. Al-Qamar (Bulan) - 55 Ayat",
+            "55. Ar-Rahman (Yang Maha Pemurah) - 78 Ayat",
+            "56. Al-Waqi'ah (Hari Kiamat) - 96 Ayat",
+            "57. Al-Hadid (Besi) - 29 Ayat",
+            "58. Al-Mujadilah (Wanita yang Mengajukan Gugatan) - 22 Ayat",
+            "59. Al-Hasyr (Pengusiran) - 24 Ayat",
+            "60. Al-Mumtahanah (Wanita yang Diuji) - 13 Ayat",
+            "61. As-Saff (Barisan) - 14 Ayat",
+            "62. Al-Jumu'ah (Hari Jum'at) - 11 Ayat",
+            "63. Al-Munafiqun (Orang-orang Munafik) - 11 Ayat",
+            "64. At-Tagabun (Hari Dinampakkan Kesalahan) - 18 Ayat",
+            "65. At-Talaq (Talak) - 12 Ayat",
+            "66. At-Tahrim (Mengharamkan) - 12 Ayat",
+            "67. Al-Mulk (Kerajaan) - 30 Ayat",
+            "68. Al-Qalam (Pena) - 52 Ayat",
+            "69. Al-Haqqah (Hari Kiamat) - 52 Ayat",
+            "70. Al-Ma'arij (Tempat Naik) - 44 Ayat",
+            "71. Nuh (Nabi Nuh) - 28 Ayat",
+            "72. Al-Jinn (Jin) - 28 Ayat",
+            "73. Al-Muzzammil (Orang yang Berselimut) - 20 Ayat",
+            "74. Al-Muddassir (Orang yang Berkemul) - 56 Ayat",
+            "75. Al-Qiyamah (Hari Kiamat) - 40 Ayat",
+            "76. Al-Insan (Manusia) - 31 Ayat",
+            "77. Al-Mursalat (Malaikat-malaikat yang Diutus) - 50 Ayat",
+            "78. An-Naba' (Berita Besar) - 40 Ayat",
+            "79. An-Nazi'at (Malaikat-malaikat yang Mencabut) - 46 Ayat",
+            "80. 'Abasa (Ia Bermuka Masam) - 42 Ayat",
+            "81. At-Takwir (Menggulung) - 29 Ayat",
+            "82. Al-Infitar (Terbelah) - 19 Ayat",
+            "83. Al-Mutaffifin (Orang-orang yang Curang) - 36 Ayat",
+            "84. Al-Insyiqaq (Terbelah) - 25 Ayat",
+            "85. Al-Buruj (Gugusan Bintang) - 22 Ayat",
+            "86. At-Tariq (Yang Datang di Malam Hari) - 17 Ayat",
+            "87. Al-A'la (Yang Paling Tinggi) - 19 Ayat",
+            "88. Al-Gasyiyah (Hari Kiamat/Menutup) - 26 Ayat",
+            "89. Al-Fajr (Fajar) - 30 Ayat",
+            "90. Al-Balad (Negeri) - 20 Ayat",
+            "91. Asy-Syams (Matahari) - 15 Ayat",
+            "92. Al-Lail (Malam) - 21 Ayat",
+            "93. Ad-Duha (Waktu Dhuha) - 11 Ayat",
+            "94. Asy-Syarh (Melapangkan) - 8 Ayat",
+            "95. At-Tin (Buah Tin) - 8 Ayat",
+            "96. Al-'Alaq (Segumpal Darah) - 19 Ayat",
+            "97. Al-Qadr (Kemuliaan) - 5 Ayat",
+            "98. Al-Bayyinah (Bukti Nyata) - 8 Ayat",
+            "99. Az-Zalzalah (Kegoncangan) - 8 Ayat",
+            "100. Al-'Adiyat (Kuda Perang yang Berlari Kencang) - 11 Ayat",
+            "101. Al-Qari'ah (Hari Kiamat) - 11 Ayat",
+            "102. At-Takasur (Bermegah-megahan) - 8 Ayat",
+            "103. Al-'Asr (Masa/Waktu) - 3 Ayat",
+            "104. Al-Humazah (Pengumpat) - 9 Ayat",
+            "105. Al-Fil (Gajah) - 5 Ayat",
+            "106. Quraisy (Suku Quraisy) - 4 Ayat",
+            "107. Al-Ma'un (Barang yang Berguna) - 7 Ayat",
+            "108. Al-Kautsar (Nikmat yang Berlimpah) - 3 Ayat",
+            "109. Al-Kafirun (Orang-orang Kafir) - 6 Ayat",
+            "110. An-Nasr (Pertolongan) - 3 Ayat",
+            "111. Al-Lahab (Gejolak Api) - 5 Ayat",
+            "112. Al-Ikhlas (Keesaan Allah) - 4 Ayat",
+            "113. Al-Falaq (Waktu Subuh) - 5 Ayat",
+            "114. An-Nas (Manusia) - 6 Ayat"
+        ];
+
+        let appState = {
+            currentUser: null,
+            selectedLevel: null,
+            activeMission: null,
+            activeLibrary: null,
+            progress: {},
+            usersList: []
+        };
+
+        const app = {
+            async initCloudData() {
+                if (!db) return;
+                try {
+                    const publicCol = collection(db, `artifacts/${appId}/public/data/mopani_users_v2`);
+                    onSnapshot(publicCol, (snapshot) => {
+                        const list = [];
+                        snapshot.forEach(docSnap => {
+                            list.push({ id: docSnap.id, ...docSnap.data() });
+                        });
+                        appState.usersList = list;
+                        if (appState.currentUser && appState.currentUser.role === 'teacher') {
+                            app.render();
+                        }
+                    });
+                } catch (e) {
+                    console.error("Cloud data sync info:", e);
+                }
+            },
+
+            async loadStudentProgress(uid) {
+                if (!db) return;
+                try {
+                    const docRef = doc(db, `artifacts/${appId}/users/${uid}/mopani_progress/user_data`);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        appState.progress = data.progress || {};
+                        if (data.currentUser) {
+                            appState.currentUser = data.currentUser;
+                        }
+                    }
+                } catch (e) {
+                    console.error("Load progress info:", e);
+                }
+            },
+
+            async saveStudentProgress() {
+                if (!db || !appState.currentUser || appState.currentUser.role !== 'student') return;
+                const uid = appState.currentUser.uid || currentUserAuth?.uid || 'local_student';
+                const schoolName = (appState.currentUser.school || 'Umum').trim();
+                const payload = {
+                    currentUser: appState.currentUser,
+                    progress: appState.progress,
+                    lastUpdated: new Date().toISOString()
+                };
+                try {
+                    const docRef = doc(db, `artifacts/${appId}/users/${uid}/mopani_progress/user_data`);
+                    await setDoc(docRef, payload, { merge: true });
+
+                    const totalPoints = Object.values(appState.progress).reduce((acc, curr) => acc + (curr.score || 0), 0);
+                    const completedCount = Object.values(appState.progress).filter(curr => curr.completed).length;
+                    
+                    const publicRef = doc(db, `artifacts/${appId}/public/data/mopani_users_v2`, uid);
+                    await setDoc(publicRef, {
+                        name: appState.currentUser.name,
+                        className: appState.currentUser.className,
+                        school: schoolName,
+                        totalPoints: totalPoints,
+                        completedMissions: completedCount,
+                        lastActive: new Date().toISOString()
+                    }, { merge: true });
+                } catch (e) {
+                    console.error("Save progress info:", e);
+                }
+            },
+
+            goHome() {
+                appState.selectedLevel = null;
+                appState.activeMission = null;
+                appState.activeLibrary = null;
+                app.render();
+            },
+
+            openLibrary() {
+                appState.activeLibrary = true;
+                appState.selectedLevel = null;
+                appState.activeMission = null;
+                app.render();
+            },
+
+            switchLoginTab(role) {
+                const studentForm = document.getElementById('student-form-wrap');
+                const teacherForm = document.getElementById('teacher-form-wrap');
+                const btnStudent = document.getElementById('btn-tab-student');
+                const btnTeacher = document.getElementById('btn-tab-teacher');
+
+                if (role === 'student') {
+                    studentForm.classList.remove('hidden');
+                    teacherForm.classList.add('hidden');
+                    btnStudent.className = "flex-1 py-2.5 font-bold text-xs sm:text-sm bg-gradient-to-r from-sunflower-500 to-amber-500 text-white rounded-xl shadow-md transition";
+                    btnTeacher.className = "flex-1 py-2.5 font-bold text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-xl transition";
+                } else {
+                    studentForm.classList.add('hidden');
+                    teacherForm.classList.remove('hidden');
+                    btnTeacher.className = "flex-1 py-2.5 font-bold text-xs sm:text-sm bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl shadow-md transition";
+                    btnStudent.className = "flex-1 py-2.5 font-bold text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-xl transition";
+                }
+            },
+
+            handleLogin(e, role) {
+                e.preventDefault();
+                if (role === 'student') {
+                    const name = document.getElementById('student-name').value.trim();
+                    const className = document.getElementById('student-class').value.trim();
+                    const school = document.getElementById('student-school').value.trim();
+                    if (!name || !className || !school) {
+                        app.showModal('Perhatian', 'Nama, Kelas, dan Nama Sekolah/Instansi wajib diisi dengan lengkap!', 'fa-triangle-exclamation');
+                        return;
+                    }
+                    const uid = currentUserAuth ? currentUserAuth.uid : 'stu_' + Date.now();
+                    appState.currentUser = { name, className, school, role: 'student', uid };
+                    app.loadStudentProgress(uid);
+                } else {
+                    const name = document.getElementById('teacher-name').value.trim();
+                    const email = document.getElementById('teacher-email').value.trim();
+                    const school = document.getElementById('teacher-school').value.trim();
+                    if (!name || !email || !school) {
+                        app.showModal('Perhatian', 'Nama, Email, dan Nama Sekolah/Instansi wajib diisi dengan lengkap!', 'fa-triangle-exclamation');
+                        return;
+                    }
+                    appState.currentUser = { name, email, school, role: 'teacher', uid: currentUserAuth ? currentUserAuth.uid : 'tch_' + Date.now() };
+                }
+                app.render();
+            },
+
+            logout() {
+                appState.currentUser = null;
+                appState.selectedLevel = null;
+                appState.activeMission = null;
+                app.render();
+            },
+
+            selectLevel(lvlId) {
+                const found = GAME_DATA.levels.find(l => l.id === lvlId);
+                if (found) {
+                    appState.selectedLevel = found;
+                    appState.activeMission = null;
+                    app.render();
+                }
+            },
+
+            selectMission(mId) {
+                if (!appState.selectedLevel) return;
+                const found = appState.selectedLevel.missions.find(m => m.id === mId);
+                if (found) {
+                    appState.activeMission = { ...found, step: 'lesson' };
+                    app.render();
+                }
+            },
+
+            startQuiz(mId) {
+                if (appState.activeMission) {
+                    appState.activeMission.step = 'quiz';
+                    appState.activeMission.currentQuizIdx = 0;
+                    appState.activeMission.scoreCount = 0;
+                    app.render();
+                }
+            },
+
+            answerQuiz(selectedIdx, correctIdx, mId, qIdx) {
+                const mission = appState.activeMission;
+                if (!mission) return;
+
+                const isCorrect = (selectedIdx === correctIdx);
+                const feedbackEl = document.getElementById(`quiz-feedback-${qIdx}`);
+                const nextBtn = document.getElementById(`next-quiz-btn-${qIdx}`);
+
+                if (isCorrect) {
+                    feedbackEl.innerHTML = `<div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 font-bold flex items-center space-x-2"><i class="fa-solid fa-circle-check text-lg"></i><span>Jawaban Benar! Hebat sekali! (+10 Poin)</span></div>`;
+                    mission.scoreCount = (mission.scoreCount || 0) + 10;
+                } else {
+                    feedbackEl.innerHTML = `<div class="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 font-bold flex items-center space-x-2"><i class="fa-solid fa-circle-xmark text-lg"></i><span>Kurang tepat. Jawaban benar: ${mission.quiz[qIdx].options[correctIdx]}</span></div>`;
+                }
+
+                const optionBtns = document.querySelectorAll(`.opt-btn-${qIdx}`);
+                optionBtns.forEach(btn => btn.disabled = true);
+                if (nextBtn) nextBtn.classList.remove('hidden');
+            },
+
+            nextQuizStep(mId) {
+                const mission = appState.activeMission;
+                if (!mission) return;
+
+                if (mission.currentQuizIdx < mission.quiz.length - 1) {
+                    mission.currentQuizIdx++;
+                    app.render();
+                } else {
+                    const earnedScore = mission.scoreCount || 10;
+                    appState.progress[mId] = { completed: true, score: earnedScore };
+                    app.saveStudentProgress();
+
+                    app.showModal('Selamat!', `Misi Berhasil Diselesaikan dengan Gemilang! Anda mendapatkan ${earnedScore} Poin MOPANI.`, 'fa-trophy');
+                    appState.activeMission = null;
+                    app.render();
+                }
+            },
+
+            showCertificate() {
+                appState.activeMission = { type: 'certificate' };
+                app.render();
+            },
+
+            printCertificate() {
+                window.print();
+            },
+
+            exportData() {
+                const teacherSchool = (appState.currentUser?.school || '').trim().toLowerCase();
+                const filteredList = appState.usersList.filter(u => (u.school || '').trim().toLowerCase() === teacherSchool);
+
+                let csvContent = `data:text/csv;charset=utf-8,Sekolah/Instansi,Nama Siswa,Kelas,Total Poin,Misi Selesai,Terakhir Aktif\n`;
+                filteredList.forEach(u => {
+                    csvContent += `"${u.school || '-'}","${u.name}","${u.className}",${u.totalPoints || 0},${u.completedMissions || 0},"${u.lastActive || '-'}"\n`;
+                });
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", `Laporan_MOPANI_${appState.currentUser.school.replace(/\s+/g, '_')}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            },
+
+            showModal(title, message, iconClass = 'fa-star') {
+                document.getElementById('modal-title').innerText = title;
+                document.getElementById('modal-message').innerText = message;
+                document.getElementById('modal-icon').innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
+                document.getElementById('modal-container').classList.remove('hidden');
+            },
+
+            closeModal() {
+                document.getElementById('modal-container').classList.add('hidden');
+            },
+
+            speakText(text) {
+                if (!('speechSynthesis' in window)) {
+                    app.showModal('Info Audio', 'Maaf, browser tidak mendukung Audio AI Ustadz.', 'fa-circle-info');
+                    return;
+                }
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ar-SA';
+                utterance.rate = 0.75;
+                utterance.pitch = 1.0;
+
+                const voices = window.speechSynthesis.getVoices();
+                const arabicVoice = voices.find(v => v.lang.includes('ar') || v.lang.includes('AR'));
+                if (arabicVoice) utterance.voice = arabicVoice;
+
+                window.speechSynthesis.speak(utterance);
+            },
+
+            render() {
+                const container = document.getElementById('app-view');
+                const userStatus = document.getElementById('user-status-container');
+
+                if (appState.currentUser) {
+                    userStatus.innerHTML = `
+                        <div class="flex items-center space-x-2.5 bg-sunflower-50 px-3.5 py-1.5 rounded-full border border-sunflower-200 shadow-sm">
+                            <span class="w-8 h-8 rounded-full bg-gradient-to-tr from-sunflower-500 to-amber-500 text-white flex items-center justify-center font-bold text-sm shadow">
+                                ${appState.currentUser.name.charAt(0).toUpperCase()}
+                            </span>
+                            <div class="text-left hidden sm:block">
+                                <p class="text-xs font-bold text-slate-900">${appState.currentUser.name}</p>
+                                <p class="text-[10px] text-slate-500">${appState.currentUser.role === 'teacher' ? 'Guru • ' + appState.currentUser.school : 'Kelas ' + appState.currentUser.className + ' • ' + appState.currentUser.school}</p>
+                            </div>
+                        </div>
+                        <button onclick="window._actualApp.logout()" title="Keluar" class="p-2.5 text-slate-400 hover:text-rose-600 bg-white hover:bg-rose-50 rounded-xl border border-slate-200 transition">
+                            <i class="fa-solid fa-right-from-bracket text-base"></i>
+                        </button>
+                    `;
+                } else {
+                    userStatus.innerHTML = ``;
+                }
+
+                if (!appState.currentUser) {
+                    container.innerHTML = `
+                        <div class="max-w-md mx-auto glass-card rounded-3xl shadow-2xl p-8 my-6 glow-effect">
+                            <div class="text-center mb-6">
+                                <div class="w-20 h-20 bg-gradient-to-tr from-sunflower-400 to-amber-500 rounded-3xl mx-auto flex items-center justify-center shadow-lg text-white font-arabic text-4xl font-bold mb-3 animate-float">
+                                    م
+                                </div>
+                                <h3 class="text-xl font-extrabold text-amber-800 font-arabic mb-1">أَهْلًا وَسَهْلًا</h3>
+                                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">MOPANI</h2>
+                                <p class="text-xs font-bold text-amber-600 uppercase tracking-widest mt-0.5">Misi Pintar Mengaji</p>
+                                <p class="text-xs text-slate-600 mt-2 font-medium italic">"Belajar Mengaji Ceria, interaktif dan Menyenangkan"</p>
+                            </div>
+
+                            <div class="flex bg-sunflower-100/80 p-1.5 rounded-2xl mb-6 border border-sunflower-200">
+                                <button id="btn-tab-student" onclick="window._actualApp.switchLoginTab('student')" class="flex-1 py-2.5 font-bold text-xs sm:text-sm bg-gradient-to-r from-sunflower-500 to-amber-500 text-white rounded-xl shadow-md transition">
+                                    Siswa
+                                </button>
+                                <button id="btn-tab-teacher" onclick="window._actualApp.switchLoginTab('teacher')" class="flex-1 py-2.5 font-bold text-xs sm:text-sm text-slate-600 hover:bg-slate-100 rounded-xl transition">
+                                    Guru
+                                </button>
+                            </div>
+
+                            <div id="student-form-wrap">
+                                <form onsubmit="window._actualApp.handleLogin(event, 'student')" class="space-y-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Lengkap Siswa</label>
+                                        <input type="text" id="student-name" placeholder="Contoh: Ahmad Al-Fatih" required
+                                            class="w-full px-4 py-3 rounded-xl border border-sunflower-200 focus:ring-2 focus:ring-sunflower-500 focus:outline-none text-xs sm:text-sm bg-sunflower-50/30 font-medium">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Kelas</label>
+                                        <input type="text" id="student-class" placeholder="Contoh: 3 SD" required
+                                            class="w-full px-4 py-3 rounded-xl border border-sunflower-200 focus:ring-2 focus:ring-sunflower-500 focus:outline-none text-xs sm:text-sm bg-sunflower-50/30 font-medium">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Sekolah / Instansi / TPQ</label>
+                                        <input type="text" id="student-school" placeholder="Contoh: SDIT Al-Ikhlas Banti" required
+                                            class="w-full px-4 py-3 rounded-xl border border-sunflower-200 focus:ring-2 focus:ring-sunflower-500 focus:outline-none text-xs sm:text-sm bg-sunflower-50/30 font-medium">
+                                    </div>
+                                    <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-sunflower-500 via-amber-500 to-sunflower-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition transform active:scale-[0.98] flex items-center justify-center space-x-2 text-sm">
+                                        <span>Mulai Petualangan Mengaji</span>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div id="teacher-form-wrap" class="hidden">
+                                <form onsubmit="window._actualApp.handleLogin(event, 'teacher')" class="space-y-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Guru / Ustadz/Ustadzah</label>
+                                        <input type="text" id="teacher-name" placeholder="Contoh: Ustadzah Fatimah, S.Pd" required
+                                            class="w-full px-4 py-3 rounded-xl border border-emerald-200 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs sm:text-sm bg-emerald-50/30 font-medium">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Alamat Email Guru</label>
+                                        <input type="email" id="teacher-email" placeholder="Contoh: guru.mopani@sekolah.sch.id" required
+                                            class="w-full px-4 py-3 rounded-xl border border-emerald-200 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs sm:text-sm bg-emerald-50/30 font-medium">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Sekolah / Instansi</label>
+                                        <input type="text" id="teacher-school" placeholder="Contoh: SDIT Al-Ikhlas Banti" required
+                                            class="w-full px-4 py-3 rounded-xl border border-emerald-200 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs sm:text-sm bg-emerald-50/30 font-medium">
+                                    </div>
+                                    <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition transform active:scale-[0.98] flex items-center justify-center space-x-2 text-sm">
+                                        <span>Buka Dasbor Guru & Rekap</span>
+                                        <i class="fa-solid fa-chart-line"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    `;
+                } else if (appState.currentUser.role === 'teacher') {
+                    const teacherSchool = (appState.currentUser.school || '').trim().toLowerCase();
+                    const filteredStudents = appState.usersList.filter(u => (u.school || '').trim().toLowerCase() === teacherSchool);
+
+                    container.innerHTML = `
+                        <div class="space-y-6">
+                            <div class="bg-gradient-to-r from-emerald-700 via-teal-700 to-emerald-800 rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                <div>
+                                    <span class="bg-emerald-600/60 text-emerald-100 text-xs font-extrabold px-3.5 py-1.5 rounded-full border border-emerald-500/40">Dasbor Profesional Guru • ${appState.currentUser.school}</span>
+                                    <h2 class="text-2xl md:text-3xl font-extrabold mt-3 font-arabic">أَهْلًا وَسَهْلًا، ${appState.currentUser.name}</h2>
+                                    <p class="text-emerald-100 text-xs mt-1.5 font-medium">Email: ${appState.currentUser.email} — Menampilkan data siswa khusus instansi ${appState.currentUser.school}.</p>
+                                </div>
+                                <button onclick="window._actualApp.exportData()" class="px-5 py-3 bg-white text-emerald-800 font-bold text-xs rounded-2xl shadow-lg hover:bg-emerald-50 transition flex items-center space-x-2">
+                                    <i class="fa-solid fa-file-excel text-emerald-600 text-base"></i>
+                                    <span>Export Laporan CSV (${appState.currentUser.school})</span>
+                                </button>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                                <div class="bg-white rounded-3xl p-6 shadow-md border border-sunflower-200 flex items-center space-x-4">
+                                    <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl font-bold shadow-inner">
+                                        <i class="fa-solid fa-users"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Siswa Terdaftar (${appState.currentUser.school})</p>
+                                        <h3 class="text-2xl font-extrabold text-slate-900 mt-0.5">${filteredStudents.length} Siswa</h3>
+                                    </div>
+                                </div>
+                                <div class="bg-white rounded-3xl p-6 shadow-md border border-sunflower-200 flex items-center space-x-4">
+                                    <div class="w-14 h-14 rounded-2xl bg-sunflower-100 text-amber-700 flex items-center justify-center text-2xl font-bold shadow-inner">
+                                        <i class="fa-solid fa-star"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Poin Instansi</p>
+                                        <h3 class="text-2xl font-extrabold text-slate-900 mt-0.5">${filteredStudents.reduce((sum, u) => sum + (u.totalPoints || 0), 0)} Poin</h3>
+                                    </div>
+                                </div>
+                                <div class="bg-white rounded-3xl p-6 shadow-md border border-sunflower-200 flex items-center space-x-4">
+                                    <div class="w-14 h-14 rounded-2xl bg-teal-100 text-teal-700 flex items-center justify-center text-2xl font-bold shadow-inner">
+                                        <i class="fa-solid fa-award"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Misi Selesai Instansi</p>
+                                        <h3 class="text-2xl font-extrabold text-slate-900 mt-0.5">${filteredStudents.reduce((sum, u) => sum + (u.completedMissions || 0), 0)} Misi</h3>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-sunflower-200">
+                                <h3 class="text-base font-extrabold text-slate-900 mb-4 flex items-center space-x-2">
+                                    <i class="fa-solid fa-table text-emerald-600"></i>
+                                    <span>Tabel Rekapitulasi Kemajuan Belajar Siswa (${appState.currentUser.school})</span>
+                                </h3>
+                                ${filteredStudents.length === 0 ? `
+                                    <div class="text-center py-12 text-slate-400">
+                                        <i class="fa-solid fa-folder-open text-4xl mb-2 text-sunflower-400"></i>
+                                        <p class="text-sm font-medium">Belum ada siswa dari sekolah ${appState.currentUser.school} yang tercatat di cloud.</p>
+                                    </div>
+                                ` : `
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full text-left border-collapse">
+                                            <thead>
+                                                <tr class="border-b border-slate-200 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                                    <th class="py-3 px-4">No</th>
+                                                    <th class="py-3 px-4">Nama Siswa</th>
+                                                    <th class="py-3 px-4">Kelas</th>
+                                                    <th class="py-3 px-4">Sekolah / Instansi</th>
+                                                    <th class="py-3 px-4">Total Poin</th>
+                                                    <th class="py-3 px-4">Misi Selesai</th>
+                                                    <th class="py-3 px-4">Aktivitas Terakhir</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-slate-100 text-sm">
+                                                ${filteredStudents.map((u, idx) => `
+                                                    <tr class="hover:bg-sunflower-50/40 transition">
+                                                        <td class="py-3.5 px-4 font-bold text-slate-400">${idx + 1}</td>
+                                                        <td class="py-3.5 px-4 font-bold text-slate-900">${u.name}</td>
+                                                        <td class="py-3.5 px-4 font-semibold text-slate-600">${u.className}</td>
+                                                        <td class="py-3.5 px-4 font-semibold text-emerald-700">${u.school}</td>
+                                                        <td class="py-3.5 px-4"><span class="px-3 py-1 bg-sunflower-100 text-amber-900 rounded-full font-bold text-xs shadow-sm">${u.totalPoints || 0} Poin</span></td>
+                                                        <td class="py-3.5 px-4 font-semibold text-emerald-700">${u.completedMissions || 0} Misi</td>
+                                                        <td class="py-3.5 px-4 text-xs text-slate-400">${u.lastActive ? new Date(u.lastActive).toLocaleString('id-ID') : '-'}</td>
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                `}
+                            </div>
+                        </div>
+                    `;
+                } else if (!appState.selectedLevel && !appState.activeMission && !appState.activeLibrary) {
+                    container.innerHTML = `
+                        <div class="space-y-6">
+                            <div class="bg-gradient-to-r from-sunflower-400 via-amber-400 to-sunflower-500 rounded-3xl p-6 md:p-8 text-slate-900 shadow-xl relative overflow-hidden">
+                                <div class="absolute -right-6 -bottom-6 text-white/20 font-arabic text-9xl select-none pointer-events-none">م</div>
+                                <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                    <div>
+                                        <span class="bg-white/90 backdrop-blur-md text-amber-900 text-xs font-extrabold px-3.5 py-1.5 rounded-full shadow-sm font-arabic">أَهْلًا وَسَهْلًا، ${appState.currentUser.name} (${appState.currentUser.school})!</span>
+                                        <h2 class="text-2xl md:text-3xl font-extrabold mt-3 tracking-tight">Pilih Level Misi Mengaji</h2>
+                                        <p class="text-amber-950 text-xs md:text-sm mt-1 font-medium">"Belajar Mengaji Ceria, interaktif dan Menyenangkan"</p>
+                                    </div>
+                                    <div class="flex flex-wrap gap-2.5">
+                                        <button onclick="window._actualApp.openLibrary()" class="px-4 py-3 bg-white text-emerald-800 font-bold text-xs rounded-2xl shadow-lg hover:bg-emerald-50 transition flex items-center space-x-2">
+                                            <i class="fa-solid fa-book-open text-emerald-600 text-base"></i>
+                                            <span>Pustaka Materi Al-Qur'an</span>
+                                        </button>
+                                        <button onclick="window._actualApp.showCertificate()" class="px-4 py-3 bg-white text-amber-800 font-bold text-xs rounded-2xl shadow-lg hover:bg-sunflower-50 transition flex items-center space-x-2">
+                                            <i class="fa-solid fa-award text-amber-500 text-base"></i>
+                                            <span>Sertifikat Saya</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                ${GAME_DATA.levels.map(lvl => `
+                                    <div onclick="window._actualApp.selectLevel('${lvl.id}')" class="bg-white rounded-3xl p-6 shadow-xl border-2 border-sunflower-200 hover:border-sunflower-400 cursor-pointer transition transform hover:-translate-y-1.5 flex flex-col justify-between group">
+                                        <div>
+                                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr ${lvl.color} text-white flex items-center justify-center text-3xl shadow-lg mb-4 group-hover:scale-105 transition">
+                                                ${lvl.badge}
+                                            </div>
+                                            <span class="text-xs font-bold text-amber-600 uppercase tracking-wider">${lvl.subtitle}</span>
+                                            <h3 class="text-xl font-extrabold text-slate-900 mt-1">${lvl.title}</h3>
+                                            <p class="text-xs text-slate-500 mt-2 leading-relaxed">Berisi ${lvl.missions.length} Misi interaktif dilengkapi audio pelafalan Ustadz AI.</p>
+                                        </div>
+                                        <div class="mt-6 pt-4 border-t border-sunflower-100 flex justify-between items-center">
+                                            <span class="text-xs font-bold text-slate-700">Mulai Belajar</span>
+                                            <div class="w-9 h-9 rounded-xl bg-sunflower-100 group-hover:bg-sunflower-500 group-hover:text-white text-amber-700 flex items-center justify-center transition shadow-sm">
+                                                <i class="fa-solid fa-play text-xs"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                } else if (appState.activeLibrary) {
+                    container.innerHTML = `
+                        <div class="space-y-6 max-w-4xl mx-auto">
+                            <div class="flex items-center justify-between">
+                                <button onclick="window._actualApp.goHome()" class="px-4 py-2 bg-white border border-sunflower-300 rounded-xl text-xs font-bold text-slate-700 hover:bg-sunflower-50 transition flex items-center space-x-2 shadow-sm">
+                                    <i class="fa-solid fa-arrow-left"></i>
+                                    <span>Kembali ke Beranda</span>
+                                </button>
+                                <span class="text-xs font-extrabold bg-emerald-100 text-emerald-800 px-3.5 py-1.5 rounded-full shadow-sm">Pustaka Materi Al-Qur'an & Tajwid Lengkap</span>
+                            </div>
+
+                            <div class="bg-gradient-to-r from-emerald-700 to-teal-800 text-white rounded-3xl p-6 md:p-8 shadow-xl">
+                                <h2 class="text-2xl font-extrabold">Pustaka Materi Al-Qur'an & Ilmu Tajwid Lengkap</h2>
+                                <p class="text-xs text-emerald-100 mt-1.5 leading-relaxed font-medium">Referensi komprehensif hukum bacaan tajwid, mad lengkap, lam alif, tanda waqaf mushaf usmani yang sangat lengkap, angka arab 1-10, serta daftar lengkap 114 surah beserta jumlah ayatnya.</p>
+                            </div>
+
+                            <div class="space-y-6">
+                                <!-- Bagian 1: Harakat, Tanwin & Hijaiyah -->
+                                <div class="bg-white rounded-3xl p-6 shadow-md border border-sunflower-200">
+                                    <h3 class="text-base font-extrabold text-slate-900 mb-4 flex items-center space-x-2.5">
+                                        <span class="w-8 h-8 rounded-xl bg-sunflower-100 text-amber-800 flex items-center justify-center text-xs font-bold shadow-sm">1</span>
+                                        <span>Macam-Macam Harakat & Tanwin</span>
+                                    </h3>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                                        <div class="p-4 bg-sunflower-50/40 rounded-2xl border border-sunflower-100 text-center">
+                                            <span class="font-arabic text-3xl text-emerald-800 block mb-1">بَ</span>
+                                            <h4 class="font-bold text-xs text-slate-900">Fathah ( َ )</h4>
+                                            <p class="text-[11px] text-slate-500 mt-0.5">Dibaca bunyi "a"</p>
+                                            <button onclick="window._actualApp.speakText('بَ')" class="mt-3 px-3 py-1.5 bg-sunflower-500 hover:bg-sunflower-600 text-white text-[10px] font-bold rounded-lg shadow"><i class="fa-solid fa-volume-high"></i> Putar</button>
+                                        </div>
+                                        <div class="p-4 bg-sunflower-50/40 rounded-2xl border border-sunflower-100 text-center">
+                                            <span class="font-arabic text-3xl text-emerald-800 block mb-1">بِ</span>
+                                            <h4 class="font-bold text-xs text-slate-900">Kasrah ( ِ )</h4>
+                                            <p class="text-[11px] text-slate-500 mt-0.5">Dibaca bunyi "i"</p>
+                                            <button onclick="window._actualApp.speakText('بِ')" class="mt-3 px-3 py-1.5 bg-sunflower-500 hover:bg-sunflower-600 text-white text-[10px] font-bold rounded-lg shadow"><i class="fa-solid fa-volume-high"></i> Putar</button>
+                                        </div>
+                                        <div class="p-4 bg-sunflower-50/40 rounded-2xl border border-sunflower-100 text-center">
+                                            <span class="font-arabic text-3xl text-emerald-800 block mb-1">بُ</span>
+                                            <h4 class="font-bold text-xs text-slate-900">Dammah ( ُ )</h4>
+                                            <p class="text-[11px] text-slate-500 mt-0.5">Dibaca bunyi "u"</p>
+                                            <button onclick="window._actualApp.speakText('بُ')" class="mt-3 px-3 py-1.5 bg-sunflower-500 hover:bg-sunflower-600 text-white text-[10px] font-bold rounded-lg shadow"><i class="fa-solid fa-volume-high"></i> Putar</button>
+                                        </div>
+                                        <div class="p-4 bg-sunflower-50/40 rounded-2xl border border-sunflower-100 text-center">
+                                            <span class="font-arabic text-3xl text-emerald-800 block mb-1">بً بٍ بٌ</span>
+                                            <h4 class="font-bold text-xs text-slate-900">Tanwin</h4>
+                                            <p class="text-[11px] text-slate-500 mt-0.5">An, In, Un</p>
+                                            <button onclick="window._actualApp.speakText('بً بٍ بٌ')" class="mt-3 px-3 py-1.5 bg-sunflower-500 hover:bg-sunflower-600 text-white text-[10px] font-bold rounded-lg shadow"><i class="fa-solid fa-volume-high"></i> Putar</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Bagian 1.2: Angka Arab 1-10 dengan Audio Ustadz AI -->
+                                <div class="bg-white rounded-3xl p-6 shadow-md border border-sunflower-200">
+                                    <h3 class="text-base font-extrabold text-slate-900 mb-2 flex items-center space-x-2.5">
+                                        <span class="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-xs font-bold shadow-sm">1.2</span>
+                                        <span>Materi Angka Arab (١ - ١٠) Lengkap dengan Audio</span>
+                                    </h3>
+                                    <p class="text-xs text-slate-500 mb-4">Klik kotak angka di bawah untuk mendengar pelafalan bilangan dalam bahasa Arab.</p>
+                                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                                        ${[
+                                            { ar: '١', num: '1', name: 'Wāhidun (وَاحِدٌ)' },
+                                            { ar: '٢', num: '2', name: 'Itsnāni (اِثْنَانِ)' },
+                                            { ar: '٣', num: '3', name: 'Tsalatsatun (ثَلَاثَةٌ)' },
+                                            { ar: '٤', num: '4', name: 'Arba\'atun (أَرْبَعَةٌ)' },
+                                            { ar: '٥', num: '5', name: 'Khamsatun (خَمْسَةٌ)' },
+                                            { ar: '٦', num: '6', name: 'Sittatun (سِتَّةٌ)' },
+                                            { ar: '٧', num: '7', name: 'Sab\'atun (سَبْعَةٌ)' },
+                                            { ar: '٨', num: '8', name: 'Samāniyatun (ثَمَانِيَةٌ)' },
+                                            { ar: '٩', num: '9', name: 'Tis\'atun (تِسْعَةٌ)' },
+                                            { ar: '١٠', num: '10', name: '\'Asyaratun (عَشَرَةٌ)' }
+                                        ].map(a => `
+                                            <div onclick="window._actualApp.speakText('${a.name}')" class="p-3 bg-sunflower-50/40 hover:bg-sunflower-100 rounded-2xl border border-sunflower-200 text-center cursor-pointer transition shadow-sm hover:scale-105">
+                                                <span class="font-arabic text-3xl text-emerald-800 block mb-1">${a.ar}</span>
+                                                <h4 class="font-bold text-xs text-slate-900">${a.num} - ${a.name}</h4>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+
+                                <!-- Bagian 1.3: Materi Huruf Hijaiyah Bersambung Lengkap & Interaktif -->
+                                <div class="bg-white rounded-3xl p-6 shadow-md border border-sunflower-200">
+                                    <h3 class="text-base font-extrabold text-slate-900 mb-2 flex items-center space-x-2.5">
+                                        <span class="w-8 h-8 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center text-xs font-bold shadow-sm">1.3</span>
+                                        <span>Materi Lengkap Huruf Hijaiyah Bersambung (Bentuk Awal, Tengah, Akhir & Contoh Kata)</span>
+                                    </h3>
+                                    <p class="text-xs text-slate-500 mb-5 leading-relaxed">Sebagian besar huruf hijaiyah berubah bentuknya ketika disambung dengan huruf lain di dalam kata. Berikut panduan lengkap 30 huruf hijaiyah dalam posisi lepas, awal, tengah, dan akhir beserta contoh kata dan tombol audio:</p>
+                                    
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                        ${[
+                                            { name: 'Alif (أ)', lepas: 'أ', awal: 'أ', tengah: 'ـأ', akhir: 'ـأ', contoh: 'أَبَدَ', desc: 'Alif tidak bisa menyambung ke huruf sesudahnya' },
+                                            { name: 'Ba (ب)', lepas: 'ب', awal: 'بـ', tengah: 'ـبـ', akhir: 'ـب', contoh: 'بَدَأَ', desc: 'Berubah bentuk menjadi garis datar bertitik di bawah' },
+                                            { name: 'Ta (ت)', lepas: 'ت', awal: 'تـ', tengah: 'ـتـ', akhir: 'ـت', contoh: 'تَبِعَ', desc: 'Memiliki dua titik di atas' },
+                                            { name: 'Tha (ث)', lepas: 'ث', awal: 'ثـ', tengah: 'ـثـ', akhir: 'ـث', contoh: 'ثَبَتَ', desc: 'Memiliki tiga titik di atas' },
+                                            { name: 'Jim (ج)', lepas: 'ج', awal: 'جـ', tengah: 'ـجـ', akhir: 'ـج', contoh: 'جَعَلَ', desc: 'Kepala melayang dengan titik di bawah' },
+                                            { name: 'Ha (ح)', lepas: 'ح', awal: 'حـ', tengah: 'ـحـ', akhir: 'ـح', contoh: 'حَسَدَ', desc: 'Tanpa titik di bawah' },
+                                            { name: 'Kha (خ)', lepas: 'خ', awal: 'خـ', tengah: 'ـخـ', akhir: 'ـخ', contoh: 'خَلَقَ', desc: 'Memiliki satu titik di atas kepala' },
+                                            { name: 'Dal (د)', lepas: 'د', awal: 'د', tengah: 'ـد', akhir: 'ـد', contoh: 'دَخَلَ', desc: 'Tidak dapat menyambung ke huruf sesudahnya' },
+                                            { name: 'Dzal (ذ)', lepas: 'ذ', awal: 'ذ', tengah: 'ـذ', akhir: 'ـذ', contoh: 'ذَهَبَ', desc: 'Tidak dapat menyambung ke huruf sesudahnya' },
+                                            { name: 'Ra (ر)', lepas: 'ر', awal: 'ر', tengah: 'ـر', akhir: 'ـر', contoh: 'رَفَعَ', desc: 'Melengkung ke bawah, tidak menyambung sesudahnya' },
+                                            { name: 'Zai (ز)', lepas: 'ز', awal: 'ز', tengah: 'ـز', akhir: 'ـز', contoh: 'زَرَعَ', desc: 'Memiliki titik di atas, tidak menyambung sesudahnya' },
+                                            { name: 'Sin (س)', lepas: 'س', awal: 'سـ', tengah: 'ـسـ', akhir: 'ـس', contoh: 'سَمِعَ', desc: 'Memiliki gigi-gigi kecil' },
+                                            { name: 'Syin (ش)', lepas: 'ش', awal: 'شـ', tengah: 'ـشـ', akhir: 'ـش', contoh: 'شَهِدَ', desc: 'Memiliki tiga titik di atas gigi' },
+                                            { name: 'Shad (ص)', lepas: 'ص', awal: 'صـ', tengah: 'ـصـ', akhir: 'ـص', contoh: 'صَبَرَ', desc: 'Kepala lonjong dengan mangkuk bawah' },
+                                            { name: 'Dhad (ض)', lepas: 'ض', awal: 'ضـ', tengah: 'ـضـ', akhir: 'ـض', contoh: 'ضَرَبَ', desc: 'Memiliki satu titik di atas kepala' },
+                                            { name: 'Tha (ط)', lepas: 'ط', awal: 'طـ', tengah: 'ـطـ', akhir: 'ـط', contoh: 'طَلَبَ', desc: 'Bentuk tetap dengan tongkat vertikal' },
+                                            { name: 'Zha (ظ)', lepas: 'ظ', awal: 'ظـ', tengah: 'ـظـ', akhir: 'ـظ', contoh: 'ظَهَرَ', desc: 'Memiliki titik di atas tongkat' },
+                                            { name: 'Ain (ع)', lepas: 'ع', awal: 'عـ', tengah: 'ـعـ', akhir: 'ـع', contoh: 'عَمِلَ', desc: 'Mata huruf berubah di awal dan tengah' },
+                                            { name: 'Ghain (غ)', lepas: 'غ', awal: 'غـ', tengah: 'ـغـ', akhir: 'ـغ', contoh: 'غَفَرَ', desc: 'Memiliki satu titik di atas mata' },
+                                            { name: 'Fa (ف)', lepas: 'ف', awal: 'فـ', tengah: 'ـفـ', akhir: 'ـف', contoh: 'فَتَحَ', desc: 'Kepala bulat melingkar dengan satu titik' },
+                                            { name: 'Qaf (ق)', lepas: 'ق', awal: 'قـ', tengah: 'ـقـ', akhir: 'ـق', contoh: 'قَرَأَ', desc: 'Kepala bulat dengan dua titik di atas' },
+                                            { name: 'Kaf (ك)', lepas: 'ك', awal: 'كـ', tengah: 'ـكـ', akhir: 'ـك', contoh: 'كَتَبَ', desc: 'Bentuk berubah menyerupai bendera kecil' },
+                                            { name: 'Lam (ل)', lepas: 'ل', awal: 'لـ', tengah: 'ـلـ', akhir: 'ـل', contoh: 'لَعِبَ', desc: 'Tegak lurus menyambung sempurna' },
+                                            { name: 'Mim (م)', lepas: 'م', awal: 'مـ', tengah: 'ـمـ', akhir: 'ـم', contoh: 'مَشَى', desc: 'Kepala bulat kecil di atas garis' },
+                                            { name: 'Nun (ن)', lepas: 'ن', awal: 'نـ', tengah: 'ـنـ', akhir: 'ـن', contoh: 'نَظَرَ', desc: 'Memiliki satu titik di bawah' },
+                                            { name: 'Ha (هـ)', lepas: 'هـ', awal: 'هـ', tengah: 'ـهـ', akhir: 'ـه', contoh: 'هَدَى', desc: 'Berubah bentuk seperti simpul di tengah' },
+                                            { name: 'Waw (و)', lepas: 'و', awal: 'و', tengah: 'ـو', akhir: 'ـو', contoh: 'وَجَدَ', desc: 'Tidak dapat menyambung ke huruf sesudahnya' },
+                                            { name: 'Lam Alif (لا)', lepas: 'لا', awal: 'لا', tengah: 'ـلا', akhir: 'ـلا', contoh: 'لَا', desc: 'Gabungan huruf Lam dan Alif' },
+                                            { name: 'Hamzah (ء)', lepas: 'ء', awal: 'ء', tengah: 'ـءـ', akhir: 'ء', contoh: 'سَأَلَ', desc: 'Duduk di atas alif, wau, atau ya' },
+                                            { name: 'Ya (ي)', lepas: 'ي', awal: 'يـ', tengah: 'ـيـ', akhir: 'ـي', contoh: 'يَدَعُ', desc: 'Memiliki dua titik di bawah' }
+                                        ].map(h => `
+                                            <div class="p-4 bg-teal-50/40 rounded-2xl border border-teal-100 shadow-sm flex flex-col justify-between">
+                                                <div>
+                                                    <div class="flex justify-between items-center mb-2">
+                                                        <h4 class="font-bold text-xs text-teal-900">${h.name}</h4>
+                                                        <button onclick="window._actualApp.speakText('${h.contoh}')" class="px-2.5 py-1 bg-teal-600 hover:bg-teal-700 text-white text-[10px] font-bold rounded-lg shadow"><i class="fa-solid fa-volume-high"></i></button>
+                                                    </div>
+                                                    <div class="grid grid-cols-4 gap-1 bg-white p-2.5 rounded-xl border border-teal-100 text-center font-arabic text-xl text-emerald-800 mb-2">
+                                                        <div><span class="text-[8px] text-slate-400 block font-sans">Lepas</span>${h.lepas}</div>
+                                                        <div><span class="text-[8px] text-slate-400 block font-sans">Awal</span>${h.awal}</div>
+                                                        <div><span class="text-[8px] text-slate-400 block font-sans">Tengah</span>${h.tengah}</div>
+                                                        <div><span class="text-[8px] text-slate-400 block font-sans">Akhir</span>${h.akhir}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="text-[11px] text-slate-600 bg-teal-100/50 p-2 rounded-xl flex justify-between items-center">
+                                                    <span>Contoh: <strong class="font-arabic text-sm text-emerald-900">${h.contoh}</strong></span>
+                                                    <span class="text-[9px] text-slate-500 italic">${h.desc}</span>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+
+                                <!-- Bagian 1.5: Tabel Lengkap 30 Huruf Hijaiyah dengan Audio Ustadz AI -->
+                                <div class="bg-white rounded-3xl p-6 shadow-md border border-sunflower-200">
+                                    <h3 class="text-base font-extrabold text-slate-900 mb-2 flex items-center space-x-2.5">
+                                        <span class="w-8 h-8 rounded-xl bg-sunflower-100 text-amber-800 flex items-center justify-center text-xs font-bold shadow-sm">1.5</span>
+                                        <span>Tabel Lengkap 30 Huruf Hijaiyah (Dilengkapi Audio Ustadz AI)</span>
+                                    </h3>
+                                    <p class="text-xs text-slate-500 mb-4">Klik pada kotak huruf untuk langsung mendengar pelafalan suara Ustadz AI.</p>
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                                        ${[
+                                            { ar: 'أ', name: 'Alif', read: 'A / I / U' },
+                                            { ar: 'ب', name: 'Ba', read: 'Ba' },
+                                            { ar: 'ت', name: 'Ta', read: 'Ta' },
+                                            { ar: 'ث', name: 'Tha', read: 'Tha' },
+                                            { ar: 'ج', name: 'Jim', read: 'Ja' },
+                                            { ar: 'ح', name: 'Ha', read: 'Ha' },
+                                            { ar: 'خ', name: 'Kha', read: 'Kha' },
+                                            { ar: 'د', name: 'Dal', read: 'Da' },
+                                            { ar: 'ذ', name: 'Dzal', read: 'Dzal' },
+                                            { ar: 'ر', name: 'Ra', read: 'Ra' },
+                                            { ar: 'ز', name: 'Zai', read: 'Zai' },
+                                            { ar: 'س', name: 'Sin', read: 'Sa' },
+                                            { ar: 'ش', name: 'Syin', read: 'Sya' },
+                                            { ar: 'ص', name: 'Shad', read: 'Sha' },
+                                            { ar: 'ض', name: 'Dhad', read: 'Dha' },
+                                            { ar: 'ط', name: 'Tha', read: 'Tha' },
+                                            { ar: 'ظ', name: 'Zha', read: 'Zha' },
+                                            { ar: 'ع', name: 'Ain', read: "\'Ain" },
+                                            { ar: 'غ', name: 'Ghain', read: 'Ghain' },
+                                            { ar: 'ف', name: 'Fa', read: 'Fa' },
+                                            { ar: 'ق', name: 'Qaf', read: 'Qa' },
+                                            { ar: 'ك', name: 'Kaf', read: 'Ka' },
+                                            { ar: 'ل', name: 'Lam', read: 'La' },
+                                            { ar: 'م', name: 'Mim', read: 'Ma' },
+                                            { ar: 'ن', name: 'Nun', read: 'Na' },
+                                            { ar: 'هـ', name: 'Ha', read: 'Ha' },
+                                            { ar: 'و', name: 'Waw', read: 'Wa' },
+                                            { ar: 'لا', name: 'Lam Alif', read: 'Lam Alif' },
+                                            { ar: 'ء', name: 'Hamzah', read: 'Hamzah' },
+                                            { ar: 'ي', name: 'Ya', read: 'Ya' }
+                                        ].map(h => `
+                                            <div onclick="window._actualApp.speakText('${h.ar}')" class="p-3 bg-sunflower-50/40 hover:bg-sunflower-100 rounded-2xl border border-sunflower-200 text-center cursor-pointer transition shadow-sm hover:scale-105">
+                                                <span class="font-arabic text-3xl text-emerald-800 block mb-1">${h.ar}</span>
+                                                <h4 class="font-bold text-xs text-slate-900">${h.name}</h4>
+                                                <span class="text-[10px] text-amber-700 font-semibold">${h.read}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+
+                                <!-- Bagian 2: Hukum Bacaan Lengkap (Nun Mati, Tanwin, Mim Mati & Qalqalah) -->
+                                <div class="bg-white rounded-3xl p-6 shadow-md border border-sunflower-200">
+                                    <h3 class="text-base font-extrabold text-slate-900 mb-4 flex items-center space-x-2.5">
+                                        <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold shadow-sm">2</span>
+                                        <span>Materi Hukum Bacaan Lengkap (Tajwid Dasar & Lanjutan)</span>
+                                    </h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="p-4 bg-emerald-50/30 rounded-2xl border border-emerald-100">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <h4 class="font-bold text-xs sm:text-sm text-emerald-900">1. Izhar Halqi (إِظْهَار حَلْقِي)</h4>
+                                                <button onclick="window._actualApp.speakText('مِنْ خَوْفٍ')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold rounded-lg shadow"><i class="fa-solid fa-volume-high"></i></button>
+                                            </div>
+                                            <p class="text-xs text-slate-600 leading-relaxed">Nun mati atau tanwin bertemu huruf halqi (ء, ه, ح, خ, ع, غ) dibaca jelas tanpa dengung.<br><span class="block mt-1.5 pt-1 border-t border-emerald-100">Contoh Nun Sukun: <strong class="font-arabic text-lg text-emerald-800">مِنْ خَوْفٍ</strong> &nbsp;|&nbsp; Tanwin: <strong class="font-arabic text-lg text-emerald-800">عَلِيمٌ حَكِيمٌ</strong></span></p>
+                                        </div>
+
+                                        <div class="p-4 bg-emerald-50/30 rounded-2xl border border-emerald-100">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <h4 class="font-bold text-xs sm:text-sm text-emerald-900">2. Idgham Bighunnah (إِدْغَام بِغُنَّة)</h4>
+                                                <button onclick="window._actualApp.speakText('مَنْ يَعْمَلْ')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold rounded-lg shadow"><i class="fa-solid fa-volume-high"></i></button>
+                                            </div>
+                                            <p class="text-xs text-slate-600 leading-relaxed">Nun mati/tanwin bertemu ي، ن، م، و dimasukkan dengan dengung.<br><span class="block mt-1.5 pt-1 border-t border-emerald-100">Contoh Nun Sukun: <strong class="font-arabic text-lg text-emerald-800">مَنْ يَعْمَلْ</strong> &nbsp;|&nbsp; Tanwin: <strong class="font-arabic text-lg text-emerald-800">خَيْرًا يَرَهُ</strong></span></p>
+                                        </div>
+
+                                        <div class="p-4 bg-emerald-50/30 rounded-2xl border border-emerald-100">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <h4 class="font-bold text-xs sm:text-sm text-emerald-900">3. Idgham Bilaghunnah (إِدْغَام بِلَا غُنَّة)</h4>
+                                                <button onclick="window._actualApp.speakText('مِنْ رَبِّهِمْ')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold rounded-lg shadow"><i class="fa-solid fa-volume-high"></i></button>
+                                            </div>
+                                            <p class="text-xs text-slate-600 leading-relaxed">Nun mati/tanwin bertemu ر atau ل dimasukkan tanpa dengung.<br><span class="block mt-1.5 pt-1 border-t border-emerald-100">Contoh Nun Sukun: <strong class="font-arabic text-lg text-emerald-800">مِنْ رَبِّهِمْ</strong> &nbsp;|&nbsp; Tanwin: <strong class="font-arabic text-lg text-emerald-800">غَفُورٌ رَحِيمٌ</strong></span></p>
+                                        </div>
+
+                                        <div class="p-4 bg-emerald-50/30 rounded-2xl border border-emerald-100">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <h4 class="font-bold text-xs sm:text-sm text-emerald-900">4. Iqlab (إِقْلَاب)</h4>
+                                                <button onclick="window._actualApp.speakText('مِنْ بَعْدِ')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold rounded-lg shadow"><i class="fa-solid fa-volume-high"></i></button>
+                                            </div>
+                                            <p class="text-xs text-slate-600 leading-relaxed">Nun mati/tanwin bertemu ب diganti suara mim mati berdengung.<br><span class="block mt-1.5 pt-1 border-t border-emerald-100">Contoh Nun Sukun: <strong class="font-arabic text-lg text-emerald-800">مِنْ بَعْدِ</strong> &nbsp;|&nbsp; Tanwin: <strong class="font-arabic text-lg text-emerald-800">سَمِيعٌ بَصِيرٌ</strong></span></p>
+                                        </div>
+
+                                        <div class="p-4 bg-emerald-50/30 rounded-2xl border border-emerald-100">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <h4 class="font-bold text-xs sm:text-sm text-emerald-900">5. Ikhfa Hakiki (إِخْفَاء حَقِيقِي)</h4>
+                                                <button onclick="window._actualApp.speakText('مِنْ طِينٍ')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold rounded-lg shadow"><i class="fa-solid fa-volume-high"></i></button>
+                                            </div>
+                                            <p class="text-xs text-slate-600 leading-relaxed">Nun mati/tanwin bertemu 15 huruf ikhfa (<strong class="text-emerald-800 font-arabic text-sm">ت، ث، ج، د، ذ، ز، س، ش، ص، ض، ط، ظ، ف، ق، ك</strong>) dibaca samar berdengung.<br><span class="block mt-1.5 pt-1 border-t border-emerald-100">Contoh Nun Sukun: <strong class="font-arabic text-lg text-emerald-800">مِنْ طِينٍ</strong> &nbsp;|&nbsp; Tanwin: <strong class="font-arabic text-lg text-emerald-800">شَيْءٍ قَدِيرٌ</strong></span></p>
+                                        </div>
+
+                                        <div class="p-4 bg-emerald-50/30 rounded-2xl border border-emerald-100">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <h4 class="font-bold text-xs sm:text-sm text-emerald-900">6. Hukum Qalqalah (قَلْقَلَة)</h4>
+                                                <button onclick="window._actualApp.speakText('قُلْ هُوَ اللَّهُ أَحَدٌ')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold rounded-lg shadow"><i class="fa-solid fa-volume-high"></i></button>
+                                            </div>
+                                            <p class="text-xs text-slate-600 leading-relaxed">Pantulan suara pada huruf ط، ج، د، ب، ق (Sughra di tengah, Kubra di akhir ayat). Contoh: <span class="font-arabic text-lg text-emerald-800">أَحَدٌ</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Bagian 3: Materi Mad Lengkap -->
+                                <div class="bg-white rounded-3xl p-6 shadow-md border border-sunflower-200">
+                                    <h3 class="text-base font-extrabold text-slate-900 mb-4 flex items-center space-x-2.5">
+                                        <span class="w-8 h-8 rounded-xl bg-sunflower-200 text-amber-900 flex items-center justify-center text-xs font-bold shadow-sm">3</span>
+                                        <span>Materi Mad Lengkap (Pemanjangan Suara)</span>
+                                    </h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="p-4 bg-sunflower-50/30 rounded-2xl border border-sunflower-100">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <h4 class="font-bold text-xs sm:text-sm text-amber-900">1. Mad Thabi'i (Mad Asli)</h4>
+                                                <button onclick="window._actualApp.speakText('قَالَ ، قِيلَ ، يَقُولُ')" class="px-2.5 py-1 bg-sunflower-500 hover:bg-sunflower-600 text-white text-[10px] font-bold rounded-lg shadow"><i class="fa-solid fa-volume-high"></i></button>
+                                            </div>
+                                            <p class="text-xs text-slate-600 leading-relaxed">Fathah diikuti alif, kasrah diikuti ya sukun, dammah diikuti waw sukun. Dibaca 2 harakat.<br><span class="block mt-1.5 pt-1 border-t border-sunflower-200">Contoh: Fathah+Alif <strong class="font-arabic text-lg text-amber-800">قَالَ</strong> &nbsp;|&nbsp; Kasrah+Ya <strong class="font-arabic text-lg text-amber-800">قِيلَ</strong> &nbsp;|&nbsp; Dammah+Waw <strong class="font-arabic text-lg text-amber-800">يَقُولُ</strong></span></p>
+                                        </div>
+
+                                        <div class="p-4 bg-sunflower-50/30 rounded-2xl border border-sunflower-100">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <h4 class="font-bold text-xs sm:text-sm text-amber-900">2. Mad Wajib Muttashil</h4>
+                                                <button onclick="window._actualApp.speakText('جَاءَ')" class="px-2.5 py-1 bg-sunflower-500 hover:bg-sunflower-600 text-white text-[10px] font-bold rounded-lg shadow"><i class="fa-solid fa-volume-high"></i></button>
+                                            </div>
+                                            <p class="text-xs text-slate-600 leading-relaxed">Mad Thabi'i bertemu hamzah dalam satu kata. Panjang 4-5 harakat. Contoh: <span class="font-arabic text-lg text-amber-800">جَاءَ</span></p>
+                                        </div>
+
+                                        <div class="p-4 bg-sunflower-50/30 rounded-2xl border border-sunflower-100">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <h4 class="font-bold text-xs sm:text-sm text-amber-900">3. Mad Jaiz Munfashil</h4>
+                                                <button onclick="window._actualApp.speakText('بِمَا أُنْزِلَ')" class="px-2.5 py-1 bg-sunflower-500 hover:bg-sunflower-600 text-white text-[10px] font-bold rounded-lg shadow"><i class="fa-solid fa-volume-high"></i></button>
+                                            </div>
+                                            <p class="text-xs text-slate-600 leading-relaxed">Mad Thabi'i bertemu hamzah di lain kata. Panjang 2, 4, atau 5 harakat. Contoh: <span class="font-arabic text-lg text-amber-800">بِمَا أُنْزِلَ</span></p>
+                                        </div>
+
+                                        <div class="p-4 bg-sunflower-50/30 rounded-2xl border border-sunflower-100">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <h4 class="font-bold text-xs sm:text-sm text-amber-900">4. Mad 'Arid Lissukun</h4>
+                                                <button onclick="window._actualApp.speakText('الْعَالَمِينَ')" class="px-2.5 py-1 bg-sunflower-500 hover:bg-sunflower-600 text-white text-[10px] font-bold rounded-lg shadow"><i class="fa-solid fa-volume-high"></i></button>
+                                            </div>
+                                            <p class="text-xs text-slate-600 leading-relaxed">Mad Thabi'i menghadapi huruf hidup yang dibaca mati karena waqaf. Contoh: <span class="font-arabic text-lg text-amber-800">الْعَالَمِينَ</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Bagian 4: Materi Lam Alif & Lam Jalallah Lengkap -->
+                                <div class="bg-white rounded-3xl p-6 shadow-md border border-sunflower-200">
+                                    <h3 class="text-base font-extrabold text-slate-900 mb-4 flex items-center space-x-2.5">
+                                        <span class="w-8 h-8 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center text-xs font-bold shadow-sm">4</span>
+                                        <span>Materi Lam Alif & Lam Jalallah Lengkap</span>
+                                    </h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div class="p-4 bg-teal-50/30 rounded-2xl border border-teal-100">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <h4 class="font-bold text-xs sm:text-sm text-teal-900">Al-Qamariyah (Qomari)</h4>
+                                                <button onclick="window._actualApp.speakText('الْقَمَرُ')" class="px-2.5 py-1 bg-teal-600 hover:bg-teal-700 text-white text-[10px] font-bold rounded-lg shadow"><i class="fa-solid fa-volume-high"></i></button>
+                                            </div>
+                                            <p class="text-xs text-slate-600 leading-relaxed">Alif Lam bertemu huruf qamariyah. Lam dibaca jelas (Izhar). Contoh: <span class="font-arabic text-lg text-teal-800">الْقَمَرُ</span></p>
+                                        </div>
+
+                                        <div class="p-4 bg-teal-50/30 rounded-2xl border border-teal-100">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <h4 class="font-bold text-xs sm:text-sm text-teal-900">Al-Syamsiyah (Syamsi)</h4>
+                                                <button onclick="window._actualApp.speakText('الشَّمْسُ')" class="px-2.5 py-1 bg-teal-600 hover:bg-teal-700 text-white text-[10px] font-bold rounded-lg shadow"><i class="fa-solid fa-volume-high"></i></button>
+                                            </div>
+                                            <p class="text-xs text-slate-600 leading-relaxed">Alif Lam bertemu huruf syamsiyah. Lam dilebur ke huruf bertasydid. Contoh: <span class="font-arabic text-lg text-teal-800">الشَّمْسُ</span></p>
+                                        </div>
+
+                                        <div class="p-4 bg-teal-50/30 rounded-2xl border border-teal-100">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <h4 class="font-bold text-xs sm:text-sm text-teal-900">Lam Jalallah (Allah)</h4>
+                                                <button onclick="window._actualApp.speakText('رَسُولُ اللَّهِ')" class="px-2.5 py-1 bg-teal-600 hover:bg-teal-700 text-white text-[10px] font-bold rounded-lg shadow"><i class="fa-solid fa-volume-high"></i></button>
+                                            </div>
+                                            <p class="text-xs text-slate-600 leading-relaxed">Tebal (Tafkhim) jika didahului Fathah/Dammah (<span class="font-arabic">قَالَ اللَّهُ</span>), tipis (Tarqiq) jika didahului Kasrah (<span class="font-arabic">بِاللَّهِ</span>).</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Bagian 5: Materi Tanda Waqaf Sangat Lengkap Sesuai Mushaf Usmani -->
+                                <div class="bg-white rounded-3xl p-6 shadow-md border border-sunflower-200">
+                                    <h3 class="text-base font-extrabold text-slate-900 mb-2 flex items-center space-x-2.5">
+                                        <span class="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-xs font-bold shadow-sm">5</span>
+                                        <span>Panduan Materi Tanda Waqaf (Berhenti) Paling Lengkap & Detail (Sesuai Mushaf Standar Usmani)</span>
+                                    </h3>
+                                    <p class="text-xs text-slate-500 mb-6 leading-relaxed">Panduan lengkap tanda-tanda berhenti dalam membaca Al-Qur'an untuk menjaga kesempurnaan makna ayat, hukum tajwid, serta napas pembaca.</p>
+                                    
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                        <div class="p-4 bg-amber-50/40 rounded-2xl border border-amber-100">
+                                            <div class="flex items-center space-x-3 mb-2">
+                                                <span class="font-arabic text-2xl font-bold text-amber-800 w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm">مـ</span>
+                                                <div>
+                                                    <h4 class="font-bold text-xs text-slate-900">1. Waqaf Lazim</h4>
+                                                    <span class="text-[10px] text-amber-800 font-bold">Wajib Berhenti</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-[11px] text-slate-600 leading-relaxed">Harus berhenti pada kata tersebut untuk menyempurnakan makna ayat agar tidak terjadi perubahan arti.</p>
+                                        </div>
+
+                                        <div class="p-4 bg-amber-50/40 rounded-2xl border border-amber-100">
+                                            <div class="flex items-center space-x-3 mb-2">
+                                                <span class="font-arabic text-2xl font-bold text-amber-800 w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm">لا</span>
+                                                <div>
+                                                    <h4 class="font-bold text-xs text-slate-900">2. Laa Washla</h4>
+                                                    <span class="text-[10px] text-rose-700 font-bold">Dilarang Berhenti</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-[11px] text-slate-600 leading-relaxed">Jangan berhenti di sini kecuali di akhir ayat sempurna. Lebih utama diteruskan (washal).</p>
+                                        </div>
+
+                                        <div class="p-4 bg-amber-50/40 rounded-2xl border border-amber-100">
+                                            <div class="flex items-center space-x-3 mb-2">
+                                                <span class="font-arabic text-2xl font-bold text-amber-800 w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm">ج</span>
+                                                <div>
+                                                    <h4 class="font-bold text-xs text-slate-900">3. Waqaf Jaiz</h4>
+                                                    <span class="text-[10px] text-amber-800 font-bold">Boleh Berhenti / Lanjut</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-[11px] text-slate-600 leading-relaxed">Boleh berhenti dan boleh dilanjutkan tanpa mengubah makna pokok ayat.</p>
+                                        </div>
+
+                                        <div class="p-4 bg-amber-50/40 rounded-2xl border border-amber-100">
+                                            <div class="flex items-center space-x-3 mb-2">
+                                                <span class="font-arabic text-2xl font-bold text-amber-800 w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm">صلى</span>
+                                                <div>
+                                                    <h4 class="font-bold text-xs text-slate-900">4. Al-Washalu Awla</h4>
+                                                    <span class="text-[10px] text-teal-700 font-bold">Utama Diteruskan</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-[11px] text-slate-600 leading-relaxed">Lebih baik meneruskan bacaan (washal), meskipun diperbolehkan untuk berhenti.</p>
+                                        </div>
+
+                                        <div class="p-4 bg-amber-50/40 rounded-2xl border border-amber-100">
+                                            <div class="flex items-center space-x-3 mb-2">
+                                                <span class="font-arabic text-2xl font-bold text-amber-800 w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm">قلي</span>
+                                                <div>
+                                                    <h4 class="font-bold text-xs text-slate-900">5. Al-Waqfu Awla</h4>
+                                                    <span class="text-[10px] text-amber-800 font-bold">Utama Berhenti</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-[11px] text-slate-600 leading-relaxed">Lebih baik berhenti (waqaf), meskipun diperbolehkan untuk diteruskan.</p>
+                                        </div>
+
+                                        <div class="p-4 bg-amber-50/40 rounded-2xl border border-amber-100">
+                                            <div class="flex items-center space-x-3 mb-2">
+                                                <span class="font-arabic text-2xl font-bold text-amber-800 w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm">ط</span>
+                                                <div>
+                                                    <h4 class="font-bold text-xs text-slate-900">6. Waqaf Mutlaq</h4>
+                                                    <span class="text-[10px] text-amber-800 font-bold">Berhenti Sempurna</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-[11px] text-slate-600 leading-relaxed">Sebaiknya berhenti karena kalimat sudah sempurna, lalu mulai membaca kembali.</p>
+                                        </div>
+
+                                        <div class="p-4 bg-amber-50/40 rounded-2xl border border-amber-100">
+                                            <div class="flex items-center space-x-3 mb-2">
+                                                <span class="font-arabic text-2xl font-bold text-amber-800 w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm">جـ</span>
+                                                <div>
+                                                    <h4 class="font-bold text-xs text-slate-900">7. Waqaf Mujawwaz</h4>
+                                                    <span class="text-[10px] text-slate-600 font-bold">Boleh Berhenti</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-[11px] text-slate-600 leading-relaxed">Boleh berhenti, namun meneruskan bacaan adalah lebih utama.</p>
+                                        </div>
+
+                                        <div class="p-4 bg-amber-50/40 rounded-2xl border border-amber-100">
+                                            <div class="flex items-center space-x-3 mb-2">
+                                                <span class="font-arabic text-2xl font-bold text-amber-800 w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm">ز</span>
+                                                <div>
+                                                    <h4 class="font-bold text-xs text-slate-900">8. Waqaf Mujawwaz Kecil</h4>
+                                                    <span class="text-[10px] text-slate-600 font-bold">Utama Lanjut</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-[11px] text-slate-600 leading-relaxed">Lebih utama untuk terus melanjutkan bacaan daripada berhenti.</p>
+                                        </div>
+
+                                        <div class="p-4 bg-amber-50/40 rounded-2xl border border-amber-100">
+                                            <div class="flex items-center space-x-3 mb-2">
+                                                <span class="font-arabic text-2xl font-bold text-amber-800 w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm">ص</span>
+                                                <div>
+                                                    <h4 class="font-bold text-xs text-slate-900">9. Waqaf Murakhshah</h4>
+                                                    <span class="text-[10px] text-slate-600 font-bold">Darurat Berhenti</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-[11px] text-slate-600 leading-relaxed">Boleh berhenti karena nafas pendek atau darurat, namun lebih utama dilanjutkan.</p>
+                                        </div>
+
+                                        <div class="p-4 bg-amber-50/40 rounded-2xl border border-amber-100">
+                                            <div class="flex items-center space-x-3 mb-2">
+                                                <span class="font-arabic text-2xl font-bold text-amber-800 w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm">قف</span>
+                                                <div>
+                                                    <h4 class="font-bold text-xs text-slate-900">10. Waqaf Qif</h4>
+                                                    <span class="text-[10px] text-amber-800 font-bold">Perintah Berhenti</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-[11px] text-slate-600 leading-relaxed">Diperintahkan untuk berhenti pada kata tersebut agar pembaca tidak salah paham.</p>
+                                        </div>
+
+                                        <div class="p-4 bg-amber-50/40 rounded-2xl border border-amber-100">
+                                            <div class="flex items-center space-x-3 mb-2">
+                                                <span class="font-arabic text-2xl font-bold text-amber-800 w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm">س</span>
+                                                <div>
+                                                    <h4 class="font-bold text-xs text-slate-900">11. Saktah (سَكْتَة)</h4>
+                                                    <span class="text-[10px] text-amber-800 font-bold">Berhenti Tanpa Ambil Nafas</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-[11px] text-slate-600 leading-relaxed">Diam sejenak sekadar satu alif (tanpa mengambil nafas baru), lalu meneruskan bacaan.</p>
+                                        </div>
+
+                                        <div class="p-4 bg-amber-50/40 rounded-2xl border border-amber-100">
+                                            <div class="flex items-center space-x-3 mb-2">
+                                                <span class="font-arabic text-xl font-bold text-amber-800 h-10 px-2 flex items-center justify-center bg-white rounded-xl shadow-sm">؀...؀</span>
+                                                <div>
+                                                    <h4 class="font-bold text-xs text-slate-900">12. Mu'anaqah (مُعَانَقَة)</h4>
+                                                    <span class="text-[10px] text-amber-800 font-bold">Titik Tiga Berpasangan</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-[11px] text-slate-600 leading-relaxed">Berhenti pada salah satu tanda titik tiga tersebut (jangan berhenti di kedua tempat sekaligus).</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Bagian 6: Daftar Lengkap 114 Surah Beserta Jumlah Ayat Sesuai Permintaan -->
+                                <div class="bg-white rounded-3xl p-6 shadow-md border border-sunflower-200">
+                                    <h3 class="text-base font-extrabold text-slate-900 mb-2 flex items-center space-x-2.5">
+                                        <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-xs font-bold shadow-sm">6</span>
+                                        <span>Daftar Lengkap 114 Surah Al-Qur'an Beserta Jumlah Ayat</span>
+                                    </h3>
+                                    <p class="text-xs text-slate-500 mb-5 leading-relaxed">Berikut adalah daftar lengkap 114 surah di dalam Al-Qur'an terurut dari Al-Fatihah hingga An-Nas beserta arti dan jumlah ayatnya masing-masing secara akurat:</p>
+                                    
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                                        <div class="p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100 text-center">
+                                            <span class="text-2xl font-extrabold text-emerald-800 block">30 Juz</span>
+                                            <span class="text-xs text-slate-500 font-medium">Pembagian Kitab</span>
+                                        </div>
+                                        <div class="p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100 text-center">
+                                            <span class="text-2xl font-extrabold text-emerald-800 block">114 Surah</span>
+                                            <span class="text-xs text-slate-500 font-medium">Keseluruhan Surah</span>
+                                        </div>
+                                        <div class="p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100 text-center">
+                                            <span class="text-2xl font-extrabold text-emerald-800 block">6.236 Ayat</span>
+                                            <span class="text-xs text-slate-500 font-medium">Total Keseluruhan Ayat</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="max-h-[500px] overflow-y-auto border border-sunflower-200 rounded-2xl p-4 bg-slate-50/60 shadow-inner">
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 text-xs font-medium">
+                                            ${ALL_SURAHS_DATA.map(surah => `
+                                                <div class="p-3 bg-white rounded-xl border border-sunflower-100 text-slate-800 shadow-sm flex items-center justify-between hover:border-sunflower-400 transition">
+                                                    <span>${surah}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (appState.selectedLevel && !appState.activeMission) {
+                    const lvl = appState.selectedLevel;
+                    container.innerHTML = `
+                        <div class="space-y-6 max-w-2xl mx-auto">
+                            <div class="flex items-center justify-between">
+                                <button onclick="window._actualApp.goHome()" class="px-4 py-2 bg-white border border-sunflower-300 rounded-xl text-xs font-bold text-slate-700 hover:bg-sunflower-50 transition flex items-center space-x-2 shadow-sm">
+                                    <i class="fa-solid fa-arrow-left"></i>
+                                    <span>Kembali ke Pilih Level</span>
+                                </button>
+                                <span class="text-xs font-extrabold bg-sunflower-200 text-amber-900 px-3.5 py-1.5 rounded-full shadow-sm">${lvl.title}</span>
+                            </div>
+
+                            <div class="text-center bg-white rounded-3xl p-6 shadow-md border border-sunflower-200">
+                                <div class="text-4xl mb-2">${lvl.badge}</div>
+                                <h2 class="text-xl font-extrabold text-slate-900">${lvl.title}</h2>
+                                <p class="text-xs text-slate-500 mt-1 font-medium">${lvl.subtitle} — Selesaikan semua misi dengan nilai terbaik!</p>
+                            </div>
+
+                            <div class="space-y-4">
+                                ${lvl.missions.map((m, idx) => {
+                                    const isDone = appState.progress[m.id]?.completed;
+                                    return `
+                                        <div onclick="window._actualApp.selectMission('${m.id}')" class="bg-white rounded-2xl p-5 shadow-md border-2 ${isDone ? 'border-emerald-300 bg-emerald-50/20' : 'border-sunflower-200 hover:border-sunflower-400'} cursor-pointer transition transform hover:-translate-y-0.5 flex items-center justify-between group">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="w-12 h-12 rounded-2xl ${isDone ? 'bg-emerald-500 text-white' : 'bg-sunflower-100 text-amber-700'} flex items-center justify-center font-bold text-lg shadow-sm">
+                                                    ${isDone ? '<i class="fa-solid fa-check"></i>' : (idx + 1)}
+                                                </div>
+                                                <div>
+                                                    <span class="text-[10px] font-bold ${isDone ? 'text-emerald-600' : 'text-amber-600'} uppercase tracking-wider">Misi ${idx + 1} (+10 Poin)</span>
+                                                    <h3 class="font-extrabold text-slate-900 text-base group-hover:text-amber-600 transition mt-0.5">${m.title}</h3>
+                                                    <p class="text-xs text-slate-500 mt-0.5">${m.desc}</p>
+                                                </div>
+                                            </div>
+                                            <div class="w-10 h-10 rounded-xl bg-sunflower-50 group-hover:bg-sunflower-500 group-hover:text-white text-amber-700 flex items-center justify-center transition shadow-sm">
+                                                <i class="fa-solid fa-chevron-right text-xs"></i>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                } else if (appState.activeMission && appState.activeMission.type === 'certificate') {
+                    const totalScore = Object.values(appState.progress).reduce((acc, curr) => acc + (curr.score || 0), 0);
+                    container.innerHTML = `
+                        <div class="max-w-2xl mx-auto space-y-6">
+                            <div class="flex justify-between items-center">
+                                <button onclick="window._actualApp.goHome()" class="px-4 py-2 bg-white border border-sunflower-300 rounded-xl text-xs font-bold text-slate-700 hover:bg-sunflower-50 transition flex items-center space-x-2 shadow-sm">
+                                    <i class="fa-solid fa-arrow-left"></i>
+                                    <span>Kembali ke Beranda</span>
+                                </button>
+                                <button onclick="window._actualApp.printCertificate()" class="px-5 py-2.5 bg-gradient-to-r from-sunflower-500 to-amber-500 text-white font-bold text-xs rounded-xl shadow-lg hover:from-sunflower-600 hover:to-amber-600 transition flex items-center space-x-2">
+                                    <i class="fa-solid fa-print"></i>
+                                    <span>Cetak / Unduh Sertifikat</span>
+                                </button>
+                            </div>
+
+                            <div id="certificate-print-area" class="bg-white rounded-3xl p-8 md:p-12 shadow-2xl border-8 border-sunflower-300 text-center relative overflow-hidden">
+                                <div class="absolute top-4 left-4 text-sunflower-300 text-4xl"><i class="fa-solid fa-sun"></i></div>
+                                <div class="absolute top-4 right-4 text-sunflower-300 text-4xl"><i class="fa-solid fa-sun"></i></div>
+
+                                <div class="w-20 h-20 bg-gradient-to-tr from-sunflower-400 to-amber-500 rounded-full mx-auto flex items-center justify-center shadow-lg text-white font-arabic text-4xl font-bold mb-4">
+                                    م
+                                </div>
+                                <h4 class="text-xs font-extrabold text-amber-600 uppercase tracking-widest">Sertifikat Penghargaan Resmi MOPANI</h4>
+                                <h2 class="text-3xl font-extrabold text-slate-900 font-arabic mt-1">سِيْرَةُ الإِتْقَان وَالتَّخَرُّج</h2>
+                                <p class="text-xs text-slate-500 mt-1 font-medium">Misi Pintar Mengaji — MOPANI</p>
+
+                                <p class="text-xs text-slate-600 mt-6 font-medium">Sertifikat kelulusan ini dengan bangga diberikan kepada:</p>
+                                <h3 class="text-2xl font-extrabold text-emerald-800 mt-2 underline decoration-sunflower-400 decoration-2">${appState.currentUser.name}</h3>
+                                <p class="text-xs text-slate-500 font-bold mt-1">Kelas: ${appState.currentUser.className} • ${appState.currentUser.school}</p>
+
+                                <p class="text-xs text-slate-600 max-w-md mx-auto mt-4 leading-relaxed font-medium">
+                                    Telah berhasil menyelesaikan seluruh rangkaian misi pembelajaran membaca Al-Qur'an dan Iqra dengan perolehan prestasi <span class="font-bold text-amber-700">${totalScore} Poin MOPANI</span>.
+                                </p>
+
+                                <div class="mt-8 pt-6 border-t border-sunflower-200 flex justify-between items-center text-xs text-slate-500">
+                                    <div class="text-left">
+                                        <p class="font-bold text-slate-800">Ide & Pengembang:</p>
+                                        <p class="text-amber-800 font-bold">🌻 Fidyawati M.I. Banti, S.Pd</p>
+                                    </div>
+                                    <div class="w-16 h-16 bg-sunflower-100 rounded-full flex items-center justify-center text-amber-700 text-2xl font-bold shadow-inner">
+                                        <i class="fa-solid fa-award"></i>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold text-slate-800">Tanggal Kelulusan</p>
+                                        <p class="font-medium">${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (appState.activeMission) {
+                    const m = appState.activeMission;
+                    container.innerHTML = `
+                        <div class="max-w-2xl mx-auto space-y-6">
+                            <div class="flex justify-between items-center">
+                                <button onclick="window._actualApp.selectLevel(appState.selectedLevel.id)" class="px-4 py-2 bg-white border border-sunflower-300 rounded-xl text-xs font-bold text-slate-700 hover:bg-sunflower-50 transition flex items-center space-x-2 shadow-sm">
+                                    <i class="fa-solid fa-arrow-left"></i>
+                                    <span>Kembali ke Daftar Misi</span>
+                                </button>
+                                <span class="text-xs font-extrabold bg-sunflower-100 text-amber-900 px-3 py-1 rounded-full shadow-sm">${m.title}</span>
+                            </div>
+
+                            ${m.step === 'lesson' ? `
+                                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-sunflower-200 space-y-6">
+                                    <div class="text-center">
+                                        <span class="text-xs font-bold bg-sunflower-100 text-amber-800 px-3.5 py-1.5 rounded-full shadow-sm">Materi Pembelajaran Ustadz AI</span>
+                                        <h3 class="text-2xl font-extrabold text-slate-900 mt-2">${m.title}</h3>
+                                        <p class="text-xs text-slate-500 mt-1 font-medium">${m.desc}</p>
+                                    </div>
+
+                                    <div class="space-y-4">
+                                        ${m.lessons.map(l => `
+                                            <div class="p-5 rounded-2xl bg-gradient-to-r from-sunflower-50/70 to-amber-50/40 border border-sunflower-200 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+                                                <div class="text-center sm:text-left">
+                                                    <span class="font-arabic text-3xl md:text-4xl text-emerald-800 font-bold block mb-1">${l.ar}</span>
+                                                    <p class="text-xs font-extrabold text-slate-900">${l.read}</p>
+                                                    <p class="text-[11px] text-slate-500 font-medium">${l.desc}</p>
+                                                </div>
+                                                <button onclick="window._actualApp.speakText('${l.ar}')" class="px-4 py-2.5 bg-sunflower-500 hover:bg-sunflower-600 text-white font-bold text-xs rounded-xl shadow transition flex items-center space-x-2">
+                                                    <i class="fa-solid fa-volume-high"></i>
+                                                    <span>Putar Suara Ustadz (AI)</span>
+                                                </button>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+
+                                    <button onclick="window._actualApp.startQuiz('${m.id}')" class="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-sm rounded-xl shadow-lg hover:shadow-xl transition transform active:scale-[0.98] flex items-center justify-center space-x-2">
+                                        <span>Mulai Tes Kuis Misi (+10 Poin)</span>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            ` : `
+                                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-sunflower-200 space-y-6">
+                                    <div class="flex justify-between items-center border-b border-sunflower-100 pb-4">
+                                        <div>
+                                            <span class="text-xs font-bold text-amber-600 uppercase tracking-wider">Pertanyaan ${m.currentQuizIdx + 1} dari ${m.quiz.length}</span>
+                                            <h3 class="text-lg font-extrabold text-slate-900 mt-0.5">Kuis Evaluasi Misi</h3>
+                                        </div>
+                                        <button onclick="window._actualApp.speakText('${m.quiz[m.currentQuizIdx].q}')" class="w-10 h-10 rounded-xl bg-sunflower-100 text-amber-800 flex items-center justify-center hover:bg-sunflower-200 transition shadow-sm" title="Dengarkan Pertanyaan">
+                                            <i class="fa-solid fa-volume-high text-sm"></i>
+                                        </button>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-base font-bold text-slate-900 mb-4 leading-relaxed">${m.quiz[m.currentQuizIdx].q}</p>
+                                        <div class="space-y-3">
+                                            ${m.quiz[m.currentQuizIdx].options.map((opt, oIdx) => `
+                                                <button onclick="window._actualApp.answerQuiz(${oIdx}, ${m.quiz[m.currentQuizIdx].answer}, '${m.id}', ${m.currentQuizIdx})" 
+                                                    class="opt-btn-${m.currentQuizIdx} w-full text-left px-5 py-3.5 rounded-xl border-2 border-sunflower-200 hover:border-sunflower-400 hover:bg-sunflower-50/50 font-semibold text-slate-800 text-sm transition flex justify-between items-center shadow-sm">
+                                                    <span>${opt}</span>
+                                                    <span class="w-6 h-6 rounded-full border border-slate-300 flex items-center justify-center text-xs font-bold text-slate-500 bg-white">${String.fromCharCode(65 + oIdx)}</span>
+                                                </button>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+
+                                    <div id="quiz-feedback-${m.currentQuizIdx}" class="text-sm"></div>
+
+                                    <button id="next-quiz-btn-${m.currentQuizIdx}" onclick="window._actualApp.nextQuizStep('${m.id}')" class="hidden w-full py-3.5 bg-gradient-to-r from-sunflower-500 to-amber-500 text-white font-bold text-sm rounded-xl shadow-lg hover:from-sunflower-600 hover:to-amber-600 transition flex items-center justify-center space-x-2">
+                                        <span>Lanjutkan Misi Berikutnya</span>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            `}
+                        </div>
+                    `;
+                }
+            }
+        };
+
+        window._actualApp = app;
+
+        window.onload = function() {
+            app.render();
+        };
+    </script>
+</body>
+</html>
